@@ -1,16 +1,15 @@
 import { useDisclosure, Button, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, Input, DrawerFooter } from "@chakra-ui/react";
 
-export type Props = React.PropsWithChildren<{}>;
+export type Props = React.PropsWithChildren<{ isOpen: boolean; onClose: () => void; }>;
 
-export const MyDrawer: React.FC<Props> = ({ children }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  // const btnRef = React.useRef()
+export const MyDrawer: React.FC<Props> = ({ isOpen, onClose, children }) => {
+  // const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <>
-      <Button colorScheme='teal' onClick={onOpen}>
+      {/* <Button colorScheme='teal' onClick={onOpen}>
         Open
-      </Button>
+      </Button> */}
       <Drawer isOpen={isOpen} placement='left' onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>

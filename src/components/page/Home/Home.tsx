@@ -1,7 +1,7 @@
-import { MyDrawer } from '@/components/ui/MyDrawer'
+import { MyHeader } from '@/components/ui/MyHeader'
 
 export type Props = React.PropsWithChildren<{}>
 
 export const Home: React.FC<Props> = ({ children }) => {
-  return <div>{<MyDrawer />}</div>
+  return <MyHeader />
 }
