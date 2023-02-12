@@ -37,7 +37,7 @@ export const MyHeader: React.FC<Props> = ({ children }) => {
 
   return (
     <>
-      <Box bg='blackAlpha.100' w='100%' h='40px' color='white'>
+      <Box bg='gray.200' w='100%' h='40px' color='white'>
         <HStack spacing={0}>
           <Square size={'40px'}>
             <>
