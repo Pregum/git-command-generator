@@ -6,12 +6,6 @@ questions:
   name: 'Please enter a page name.'
 ---
 
-# `{{ inputs.name | pascal }}/index.ts`
-
-```typescript
-export * from './{{ inputs.name }}';
-```
-
 # `{{ inputs.name | pascal }}/{{ inputs.name | pascal }}.page.tsx`
 
 ```typescript
