@@ -36,7 +36,7 @@ export const MyHeader: React.FC<Props> = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
-    <Flex direction='column' h='100vh'>
+    <>
       <Box bg='blackAlpha.100' w='100%' h='40px' color='white'>
         <HStack spacing={0}>
           <Square size={'40px'}>
@@ -91,9 +91,6 @@ export const MyHeader: React.FC<Props> = ({ children }) => {
           </Square>
         </HStack>
       </Box>
-      <Box bg='orange.50' h='100%'>
-        hoge
-      </Box>
-    </Flex>
+    </>
   )
 }

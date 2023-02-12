@@ -3,21 +3,17 @@ import { useDisclosure, Button, Drawer, DrawerOverlay, DrawerContent, DrawerClos
 export type Props = React.PropsWithChildren<{ isOpen: boolean; onClose: () => void; }>;
 
 export const MyDrawer: React.FC<Props> = ({ isOpen, onClose, children }) => {
-  // const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <>
-      {/* <Button colorScheme='teal' onClick={onOpen}>
-        Open
-      </Button> */}
-      <Drawer isOpen={isOpen} placement='left' onClose={onClose}>
+      <Drawer isOpen={isOpen} placement='left' onClose={onClose} > 
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Create your account</DrawerHeader>
+          <DrawerHeader>メニュー</DrawerHeader>
 
           <DrawerBody>
-            <Input placeholder='Type here...' />
+            <Input placeholder='検索ワードを入力...' />
           </DrawerBody>
 
           <DrawerFooter>
