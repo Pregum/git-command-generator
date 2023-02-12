@@ -1,5 +1,10 @@
+import { CommitHistoryImportButton } from '@/components/model/commitHistory/CommitHistoryImportButton'
 import { MyHeader } from '@/components/ui/MyHeader'
-import { Box, Flex, Grid, HStack } from '@chakra-ui/react'
+import {
+  Box,
+  Flex,
+  Grid,
+} from '@chakra-ui/react'
 import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
 
 export type Props = React.PropsWithChildren<{}>
@@ -14,7 +19,11 @@ export const Home: React.FC<Props> = ({ children }) => {
           <CommitHistoryLoader />
         </Grid>
 
-        <Grid flex={4}>
+        <Grid flex={1} h='100%' borderRadius='100%'>
+          <CommitHistoryImportButton />
+        </Grid>
+
+        <Grid flex={8}>
           <Box bg='orange.50' h='100%'>
             hoge
           </Box>
