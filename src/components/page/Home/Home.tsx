@@ -2,6 +2,7 @@ import { CommitHistoryImportButton } from '@/components/model/commitHistory/Comm
 import { MyHeader } from '@/components/ui/MyHeader'
 import {
   Box,
+  Center,
   Flex,
   Grid,
 } from '@chakra-ui/react'
@@ -25,7 +26,8 @@ export const Home: React.FC<Props> = ({ children }) => {
 
         <Grid flex={8}>
           <Box bg='orange.50' h='100%'>
-            hoge
+            <Center>
+            </Center>
           </Box>
         </Grid>
       </Flex>
