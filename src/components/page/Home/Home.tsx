@@ -1,14 +1,9 @@
 import { CommitHistoryImportButton } from '@/components/model/commitHistory/CommitHistoryImportButton'
 import { MyHeader } from '@/components/ui/MyHeader'
-import {
-  Box,
-  Center,
-  Flex,
-  Grid,
-} from '@chakra-ui/react'
+import { Box, Center, Flex, Grid } from '@chakra-ui/react'
 import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
-import ReactFlow from 'reactflow'
-import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea';
+import ReactFlow, { ReactFlowProvider } from 'reactflow'
+import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea'
 
 export type Props = React.PropsWithChildren<{}>
 
@@ -28,8 +23,9 @@ export const Home: React.FC<Props> = ({ children }) => {
 
         <Grid flex={8}>
           <Box bg='orange.50' h='100%'>
-              {/* <DiagramCanvasComponent /> */}
+            <ReactFlowProvider>
               <DiagramCanvasDrawArea />
+            </ReactFlowProvider>
           </Box>
         </Grid>
       </Flex>
