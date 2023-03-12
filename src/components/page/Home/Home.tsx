@@ -2,19 +2,41 @@ import { CommitHistoryImportButton } from '@/components/model/commitHistory/Comm
 import { MyHeader } from '@/components/ui/MyHeader'
 import { Box, Center, Flex, Grid } from '@chakra-ui/react'
 import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
-import ReactFlow, { ReactFlowProvider } from 'reactflow'
+import ReactFlow, { ReactFlowProvider, useReactFlow, Node } from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea'
 
 export type Props = React.PropsWithChildren<{}>
 
+let nodeId = 0
+
 export const Home: React.FC<Props> = ({ children }) => {
+  const reactFlowInstance = useReactFlow()
+
+  const defaultY = 100
+  const defaultX = 0
+
+  const onClickExecute = (message: String) => {
+    const id = `${++nodeId}`
+    const newNode: Node<any, string | undefined> = {
+      id,
+      position: {
+        x: defaultX,
+        y: defaultY + nodeId * 100,
+      },
+      data: {
+        label: message,
+      },
+    }
+    reactFlowInstance.addNodes(newNode)
+  }
+
   return (
     <Flex direction='column' h='100vh'>
       <MyHeader />
 
       <Flex direction='row' h='100%'>
         <Grid flex={2} maxW='300px' h='100%'>
-          <CommitHistoryLoader />
+          <CommitHistoryLoader onClickExecute={onClickExecute} />
         </Grid>
 
         {/* <Grid flex={1} h='100%' borderRadius='100%'>
@@ -23,12 +45,12 @@ export const Home: React.FC<Props> = ({ children }) => {
 
         <Grid flex={4}>
           <Box bg='orange.50' h='100%'>
-            <ReactFlowProvider>
-              <DiagramCanvasDrawArea />
-            </ReactFlowProvider>
+            <DiagramCanvasDrawArea reactFlowInstance={reactFlowInstance} />
           </Box>
         </Grid>
       </Flex>
     </Flex>
   )
 }
+
+export default Home
