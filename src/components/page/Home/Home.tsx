@@ -20,6 +20,14 @@ import { useToast } from '@chakra-ui/react'
 
 export type Props = React.PropsWithChildren<{}>
 
+type Branch = {
+  branchName: string
+  no: number
+  rootNodeId: string
+  currentNodeId: string
+  latestNodeId: string
+}
+
 let nodeId = 0
 
 const initialNodes: Node[] = [
@@ -27,10 +35,22 @@ const initialNodes: Node[] = [
   { id: 'i2', position: { x: 0, y: 100 }, data: { label: 'second commit' } },
 ]
 
+const initialBranches: Branch[] = [
+  {
+    branchName: 'main',
+    no: 1,
+    rootNodeId: initialNodes[initialNodes.length - 1].id,
+    currentNodeId: initialNodes[initialNodes.length - 1].id,
+    latestNodeId: initialNodes[initialNodes.length - 1].id,
+  },
+]
+
 const initialEdges: Edge[] = [{ id: 'e1-2', source: 'i1', target: 'i2' }]
 
 export const Home: React.FC<Props> = ({ children }) => {
   const [message, setMessage] = useState<string>('')
+  const [currentBranch, setCurrentBranch] = useState<Branch>(initialBranches[0])
+  const [branches, setBranches] = useState<Branch[]>(initialBranches)
   const [latestNode, setLatestNode] = useState<Node>(
     initialNodes[initialNodes.length - 1]
   )
@@ -71,14 +91,16 @@ export const Home: React.FC<Props> = ({ children }) => {
   const onClickExecute = (message: String) => {
     let parsedMessage = ''
     // const commitRegex = /git\s+commit\s+(?:(?:-m)?\s+)?[\"\'](?<mes>[\w\_\-]+)[\"\']/
-    const commitRegex = /git\s+commit\s+(?:-m\s+)(?<quote>["'])(?<mes>[\w\_\-\s]+)\k<quote>/
-    const checkoutRegex = /git\s+checkout\s+(?<branchName>[\w\_\-]+)/
-    // if(message.startsWith('git commit -m')) {
+    const commitRegex =
+      /git\s+commit\s+(?:-m\s+)(?<quote>["'])(?<mes>[\w\_\-\s]+)\k<quote>/
+    const checkoutRegex = /git\s+checkout\s+-b\s+(?<branchName>[\w\_\-]+)/
 
     if (message.match(checkoutRegex)) {
-      // TODO: checkoutを実行できる処理を記述する
+      const branchName = message.match(checkoutRegex)?.groups?.branchName ?? ''
+      checkoutAction(branchName)
     } else if (message.match(commitRegex)) {
       parsedMessage = message.match(commitRegex)?.groups?.mes ?? ''
+      commitAction(parsedMessage)
     } else {
       toast({
         title: 'コマンドが不正です',
@@ -88,54 +110,6 @@ export const Home: React.FC<Props> = ({ children }) => {
       })
       return
     }
-
-    // 空文字の場合は処理終了
-    if (!parsedMessage.length) {
-      return
-    }
-
-    // const nodes = reactFlowInstance.getNodes()
-    // console.log(` nodes: ${JSON.stringify(nodes, undefined, 2)}`)
-    // console.log(`nodes[0]: ${JSON.stringify(nodes[0], undefined, 2)}`)
-
-    let lastNode: Node | undefined = latestNode
-    let x = defaultX
-    let y = defaultY + nodeId * 100
-    if (lastNode) {
-      // lastNode = nodes[nodes.length - 1]
-      x = lastNode.position.x
-      y = lastNode.position.y + 100
-    }
-
-    const id = `${++nodeId}`
-    const newNode: Node<any, string | undefined> = {
-      id,
-      position: {
-        x: x,
-        y: y,
-      },
-      data: {
-        label: parsedMessage,
-      },
-    }
-    reactFlowInstance.addNodes(newNode)
-    // setNodes((prev) => {
-    //   prev.push(newNode)
-    //   return prev
-    // })
-    if (lastNode) {
-      connectEdge(lastNode, newNode)
-    }
-    reactFlowInstance.fitView({ minZoom: 0.5, nodes: nodes })
-
-    setLatestNode(newNode)
-    toast({
-      title: 'ノードを追加しました。',
-      description: `node id: ${newNode.id}, nodes.length: ${nodes.length}`,
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    })
   }
 
   const connectEdge = (fromNode: Node, toNode: Node) => {
@@ -145,10 +119,6 @@ export const Home: React.FC<Props> = ({ children }) => {
       target: toNode.id,
     }
     reactFlowInstance.addEdges(edge)
-    // setEdges((prev) => {
-    //   prev.push(edge)
-    //   return prev
-    // })
 
     toast({
       title: 'エッジを追加しました。',
@@ -157,6 +127,137 @@ export const Home: React.FC<Props> = ({ children }) => {
       duration: 3000,
       isClosable: true,
     })
+  }
+
+  const commitAction = (parsedMessage: string) => {
+    // 空文字の場合は処理終了
+    if (!parsedMessage.length) {
+      return
+    }
+
+    let lastNode: Node | undefined = latestNode
+    let x = defaultX
+    let y = defaultY + nodeId * 100
+    if (lastNode) {
+      // lastNode = nodes[nodes.length - 1]
+      x = lastNode.position.x + ((currentBranch.no - 1) * ((lastNode.width ?? 0) + 25)) 
+      y = lastNode.position.y + 100
+    }
+
+    const id = `${++nodeId}`
+    const newNode = generateNewNode({ id, x, y, label: parsedMessage })
+
+    reactFlowInstance.addNodes(newNode)
+    if (lastNode) {
+      connectEdge(lastNode, newNode)
+    }
+    reactFlowInstance.fitView({ minZoom: 0.5, nodes: reactFlowInstance.getNodes() })
+
+    setLatestNode(newNode)
+    setCurrentBranch((prev) => {
+      prev.currentNodeId = newNode.id
+      prev.latestNodeId = newNode.id
+      return prev
+    })
+    toast({
+      title: 'ノードを追加しました。',
+      // description: `node id: ${newNode.id}, nodes.length: ${nodes.length}`,
+      description: `x: ${x}`,
+      status: 'info',
+      duration: 3000,
+      isClosable: true,
+    })
+    toast({
+      title: 'ブランチ情報を更新しました。',
+      description: `currentBranch: ${JSON.stringify(currentBranch, null, 2)}`,
+      status: 'success',
+      isClosable: true,
+    })
+  }
+
+  const checkoutAction = (branchName: string) => {
+    // 空文字の場合は処理終了
+    if (!branchName.length) {
+      toast({
+        title: 'ブランチ名が空です',
+        status: 'error',
+        isClosable: true,
+      })
+      return
+    }
+
+    const foundBranch = branches.find(
+      (branch) => branch.branchName == branchName
+    )
+    if (foundBranch) {
+      toast({
+        title: '同名のブランチが存在しています',
+        description: `branchName: ${branchName}`,
+        status: 'error',
+        isClosable: true,
+      })
+      return
+    }
+
+    // 新しいブランチの場合は右側にnodeを作成する処理を実装
+    let lastNode: Partial<Node> = latestNode
+    if (!lastNode) {
+      toast({
+        title: 'コミット情報が取得できませんでした',
+        status: 'error',
+        isClosable: true,
+      })
+      return
+    }
+
+    // ここで横にずらす
+    const newBranch: Branch = {
+      branchName: branchName,
+      no: branches.length + 1,
+      rootNodeId: latestNode.id,
+      currentNodeId: latestNode.id,
+      latestNodeId: latestNode.id,
+    }
+
+    setBranches((prev) => {
+      prev.push(newBranch)
+      return prev
+    })
+
+    setCurrentBranch(newBranch)
+
+    toast({
+      title: 'ブランチをcheckoutしました',
+      description: `新しいブランチ名: ${branchName}`,
+      status: 'success',
+      isClosable: true,
+    })
+  }
+
+  const generateNewNode = ({
+    id,
+    x,
+    y,
+    label,
+  }: {
+    id?: string
+    x: number
+    y: number
+    label: string
+  }) => {
+    const newNode: Node<any, string | undefined> = {
+      id: id ?? `${++nodeId}`,
+      position: {
+        x: x,
+        y: y,
+      },
+      data: {
+        label: label,
+      },
+      width: 200
+    }
+
+    return newNode
   }
 
   return (
