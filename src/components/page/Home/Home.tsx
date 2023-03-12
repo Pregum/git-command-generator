@@ -4,6 +4,7 @@ import { Box, Center, Flex, Grid } from '@chakra-ui/react'
 import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
 import ReactFlow, { ReactFlowProvider, useReactFlow, Node } from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea'
+import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/CustomKeybinding'
 
 export type Props = React.PropsWithChildren<{}>
 
@@ -11,11 +12,27 @@ let nodeId = 0
 
 export const Home: React.FC<Props> = ({ children }) => {
   const reactFlowInstance = useReactFlow()
+  // ref: https://blog.stin.ink/articles/react-hooks-keybind
+  useCustomKeybinding({
+    key: 'Enter',
+    metaKey: true,
+    onKeyDown: () => console.log(' mac execute! ')
+  })
 
+  useCustomKeybinding({
+    key: 'Enter',
+    altKey: true,
+    onKeyDown: () => console.log(' windows execute! ')
+  })
   const defaultY = 100
   const defaultX = 0
 
   const onClickExecute = (message: String) => {
+    // 空文字の場合は処理終了
+    if (!message.length) {
+      return
+    }
+
     const id = `${++nodeId}`
     const newNode: Node<any, string | undefined> = {
       id,
