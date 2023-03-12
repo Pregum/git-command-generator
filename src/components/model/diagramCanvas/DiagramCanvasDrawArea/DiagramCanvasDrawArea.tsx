@@ -2,6 +2,8 @@ export type Props = React.PropsWithChildren<{}>
 import React, { useCallback } from 'react'
 import ReactFlow, {
   addEdge,
+  Background,
+  BackgroundVariant,
   Controls,
   MiniMap,
   useEdgesState,
@@ -27,15 +29,18 @@ export const DiagramCanvasDrawArea: React.FC<Props> = ({ children }) => {
   )
 
   return (
-    <ReactFlow
-      nodes={initialNodes}
-      edges={initialEdges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-    >
-      <Controls />
-      <MiniMap />
-    </ReactFlow>
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+      >
+        <Controls />
+        <MiniMap />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+      </ReactFlow>
+    </div>
   )
 }
