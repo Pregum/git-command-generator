@@ -2,7 +2,12 @@ import { CommitHistoryImportButton } from '@/components/model/commitHistory/Comm
 import { MyHeader } from '@/components/ui/MyHeader'
 import { Box, Center, Flex, Grid } from '@chakra-ui/react'
 import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
-import ReactFlow, { ReactFlowProvider, useReactFlow, Node } from 'reactflow'
+import ReactFlow, {
+  ReactFlowProvider,
+  useReactFlow,
+  Node,
+  Edge,
+} from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea'
 import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/CustomKeybinding'
 import { useState } from 'react'
@@ -15,6 +20,7 @@ export const Home: React.FC<Props> = ({ children }) => {
   const [message, setMessage] = useState<string>('')
   const reactFlowInstance = useReactFlow()
   // ref: https://blog.stin.ink/articles/react-hooks-keybind
+  // mac用
   useCustomKeybinding({
     key: 'Enter',
     metaKey: true,
@@ -24,6 +30,7 @@ export const Home: React.FC<Props> = ({ children }) => {
     },
   })
 
+  // windows用
   useCustomKeybinding({
     key: 'Enter',
     altKey: true,
@@ -54,6 +61,20 @@ export const Home: React.FC<Props> = ({ children }) => {
       },
     }
     reactFlowInstance.addNodes(newNode)
+    const nodes = reactFlowInstance.getNodes()
+    if (nodes.length) {
+      const lastNode = nodes[nodes.length - 1]
+      addEdge(lastNode, newNode)
+    }
+  }
+
+  const addEdge = (fromNode: Node, toNode: Node) => {
+    const edge: Edge = {
+      id: `e${fromNode.id}-${toNode.id}`,
+      source: fromNode.id,
+      target: toNode.id,
+    }
+    reactFlowInstance.addEdges(edge)
   }
 
   return (
