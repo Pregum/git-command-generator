@@ -71,7 +71,7 @@ export const Home: React.FC<Props> = ({ children }) => {
   const onClickExecute = (message: String) => {
     let parsedMessage = ''
     // const commitRegex = /git\s+commit\s+(?:(?:-m)?\s+)?[\"\'](?<mes>[\w\_\-]+)[\"\']/
-    const commitRegex = /git\s+commit\s+(?:-m\s+)["'](?<mes>[\w\_\-\s]+)["']/
+    const commitRegex = /git\s+commit\s+(?:-m\s+)(?<quote>["'])(?<mes>[\w\_\-\s]+)\k<quote>/
     const checkoutRegex = /git\s+checkout\s+(?<branchName>[\w\_\-]+)/
     // if(message.startsWith('git commit -m')) {
 
