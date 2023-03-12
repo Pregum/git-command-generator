@@ -15,11 +15,11 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 
 const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
+  { id: 'f1', position: { x: 0, y: 0 }, data: { label: '1' } },
+  { id: 'f2', position: { x: 0, y: 100 }, data: { label: '2' } },
 ]
 
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }]
+const initialEdges = [{ id: 'e1-2', source: 'f1', target: 'f2' }]
 
 let nodeId = 0
 
@@ -50,9 +50,6 @@ export const DiagramCanvasDrawArea: React.FC<Props> = ({ children }) => {
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Button onClick={onClick} m={50} bg={'teal.300'}>
-        add node
-      </Button>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -61,6 +58,9 @@ export const DiagramCanvasDrawArea: React.FC<Props> = ({ children }) => {
         onConnect={onConnect}
         fitView
       >
+        <Button zIndex={4} onClick={onClick} m={50} bg={'teal.300'}>
+          add node
+        </Button>
         <Controls />
         <MiniMap />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
