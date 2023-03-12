@@ -15,13 +15,13 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 
 const initialNodes = [
-  { id: 'f1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: 'f2', position: { x: 0, y: 100 }, data: { label: '2' } },
+  { id: '1', position: { x: 0, y: 0 }, data: { label: 'first commit' } },
+  { id: '2', position: { x: 0, y: 100 }, data: { label: 'second commit' } },
 ]
 
 const initialEdges = [{ id: 'e1-2', source: 'f1', target: 'f2' }]
 
-let nodeId = 0
+let nodeId = initialNodes.length
 
 export const DiagramCanvasDrawArea: React.FC<Props> = ({ children }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
@@ -49,7 +49,7 @@ export const DiagramCanvasDrawArea: React.FC<Props> = ({ children }) => {
   }, [reactFlowInstance])
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -58,9 +58,9 @@ export const DiagramCanvasDrawArea: React.FC<Props> = ({ children }) => {
         onConnect={onConnect}
         fitView
       >
-        <Button zIndex={4} onClick={onClick} m={50} bg={'teal.300'}>
+        {/* <Button zIndex={4} onClick={onClick} m={50} bg={'teal.300'}>
           add node
-        </Button>
+        </Button> */}
         <Controls />
         <MiniMap />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />

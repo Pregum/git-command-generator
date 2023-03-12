@@ -13,15 +13,15 @@ export const Home: React.FC<Props> = ({ children }) => {
       <MyHeader />
 
       <Flex direction='row' h='100%'>
-        {/* <Grid w={80} h='100%'>
+        <Grid flex={2} maxW='300px' h='100%'>
           <CommitHistoryLoader />
-        </Grid> */}
+        </Grid>
 
         {/* <Grid flex={1} h='100%' borderRadius='100%'>
           <CommitHistoryImportButton />
         </Grid> */}
 
-        <Grid flex={8}>
+        <Grid flex={4}>
           <Box bg='orange.50' h='100%'>
             <ReactFlowProvider>
               <DiagramCanvasDrawArea />
