@@ -1,23 +1,33 @@
 import { Button, Card, Flex, Grid, Textarea } from '@chakra-ui/react'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export type Props = React.PropsWithChildren<{
-  onClickExecute: (message: String) => void
+  onClickExecute: (message: string) => void
+  message: string
+  onChangedMessage: (newValue: string) => void
 }>
 
 export const CommitHistoryLoader: React.FC<Props> = ({
   children,
   onClickExecute,
+  message,
+  onChangedMessage,
 }) => {
-  const [value, setValue] = useState('')
-  const handleInputChange = (e: any) => {
-    const inputValue = e.target.value
-    setValue(inputValue)
-  }
-
+  const [value, setValue] = useState(message)
   const onCallback = useCallback(() => {
     onClickExecute(value)
   }, [onClickExecute, value])
+
+  useEffect(() => {
+    setValue(message)
+  }, [message])
+
+  const handleInputChange = (e: any) => {
+    const inputValue = e.target.value
+    setValue(inputValue)
+    onChangedMessage(inputValue)
+  }
+
   return (
     <Flex direction='column' bg='gray.200'>
       <Grid h={16} m={2}>

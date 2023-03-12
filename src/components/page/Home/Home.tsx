@@ -5,25 +5,34 @@ import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoad
 import ReactFlow, { ReactFlowProvider, useReactFlow, Node } from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea'
 import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/CustomKeybinding'
+import { useState } from 'react'
 
 export type Props = React.PropsWithChildren<{}>
 
 let nodeId = 0
 
 export const Home: React.FC<Props> = ({ children }) => {
+  const [message, setMessage] = useState<string>('')
   const reactFlowInstance = useReactFlow()
   // ref: https://blog.stin.ink/articles/react-hooks-keybind
   useCustomKeybinding({
     key: 'Enter',
     metaKey: true,
-    onKeyDown: () => console.log(' mac execute! ')
+    onKeyDown: () => {
+      onClickExecute(message)
+      setMessage('')
+    },
   })
 
   useCustomKeybinding({
     key: 'Enter',
     altKey: true,
-    onKeyDown: () => console.log(' windows execute! ')
+    onKeyDown: () => {
+      onClickExecute(message)
+      setMessage('')
+    },
   })
+
   const defaultY = 100
   const defaultX = 0
 
@@ -53,7 +62,11 @@ export const Home: React.FC<Props> = ({ children }) => {
 
       <Flex direction='row' h='100%'>
         <Grid flex={2} maxW='300px' h='100%'>
-          <CommitHistoryLoader onClickExecute={onClickExecute} />
+          <CommitHistoryLoader
+            onClickExecute={onClickExecute}
+            message={message}
+            onChangedMessage={(newMessage) => setMessage(newMessage)}
+          />
         </Grid>
 
         {/* <Grid flex={1} h='100%' borderRadius='100%'>
