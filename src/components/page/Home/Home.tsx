@@ -69,8 +69,28 @@ export const Home: React.FC<Props> = ({ children }) => {
   const defaultX = 0
 
   const onClickExecute = (message: String) => {
+    let parsedMessage = ''
+    // const commitRegex = /git\s+commit\s+(?:(?:-m)?\s+)?[\"\'](?<mes>[\w\_\-]+)[\"\']/
+    const commitRegex = /git\s+commit\s+(?:-m\s+)["'](?<mes>[\w\_\-\s]+)["']/
+    const checkoutRegex = /git\s+checkout\s+(?<branchName>[\w\_\-]+)/
+    // if(message.startsWith('git commit -m')) {
+
+    if (message.match(checkoutRegex)) {
+      // TODO: checkoutを実行できる処理を記述する
+    } else if (message.match(commitRegex)) {
+      parsedMessage = message.match(commitRegex)?.groups?.mes ?? ''
+    } else {
+      toast({
+        title: 'コマンドが不正です',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
+      return
+    }
+
     // 空文字の場合は処理終了
-    if (!message.length) {
+    if (!parsedMessage.length) {
       return
     }
 
@@ -95,7 +115,7 @@ export const Home: React.FC<Props> = ({ children }) => {
         y: y,
       },
       data: {
-        label: message,
+        label: parsedMessage,
       },
     }
     reactFlowInstance.addNodes(newNode)
