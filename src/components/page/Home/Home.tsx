@@ -7,6 +7,8 @@ import {
   Grid,
 } from '@chakra-ui/react'
 import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
+import ReactFlow from 'reactflow'
+import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea';
 
 export type Props = React.PropsWithChildren<{}>
 
@@ -16,18 +18,18 @@ export const Home: React.FC<Props> = ({ children }) => {
       <MyHeader />
 
       <Flex direction='row' h='100%'>
-        <Grid w={80} h='100%'>
+        {/* <Grid w={80} h='100%'>
           <CommitHistoryLoader />
-        </Grid>
+        </Grid> */}
 
-        <Grid flex={1} h='100%' borderRadius='100%'>
+        {/* <Grid flex={1} h='100%' borderRadius='100%'>
           <CommitHistoryImportButton />
-        </Grid>
+        </Grid> */}
 
         <Grid flex={8}>
           <Box bg='orange.50' h='100%'>
-            <Center>
-            </Center>
+              {/* <DiagramCanvasComponent /> */}
+              <DiagramCanvasDrawArea />
           </Box>
         </Grid>
       </Flex>
