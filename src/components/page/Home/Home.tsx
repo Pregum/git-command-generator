@@ -20,6 +20,10 @@ import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/Cust
 import { CSSProperties, useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 
+const NODE_WIDTH = 200
+const BRANCH_Y = -100
+const BRANCH_UNIT_X = 45
+
 export type Props = React.PropsWithChildren<{}>
 
 type Branch = {
@@ -32,7 +36,11 @@ type Branch = {
 
 let nodeId = 0
 
-function createBranchNode(id: string, position: {x: number, y: number}, label: string): Node {
+function createBranchNode(
+  id: string,
+  position: { x: number; y: number },
+  label: string
+): Node {
   const node = {
     id,
     position,
@@ -53,18 +61,18 @@ function createBranchNode(id: string, position: {x: number, y: number}, label: s
 }
 
 const initialNodes: Node[] = [
-  createBranchNode('main_root', { x: 45, y: - 100 }, 'main'),
+  createBranchNode('main_root', { x: BRANCH_UNIT_X, y: BRANCH_Y }, 'main'),
   {
     id: 'i1',
     position: { x: 0, y: 0 },
     data: { label: 'first commit' },
-    width: 200,
+    width: NODE_WIDTH,
   },
   {
     id: 'i2',
     position: { x: 0, y: 100 },
     data: { label: 'second commit' },
-    width: 200,
+    width: NODE_WIDTH,
     style: {
       backgroundColor: 'aqua',
     },
@@ -336,6 +344,8 @@ export const Home: React.FC<Props> = ({ children }) => {
       return
     }
 
+    const branchLength = branches.length
+
     // ここで横にずらす
     const newBranch: Branch = {
       branchName: branchName,
@@ -351,6 +361,18 @@ export const Home: React.FC<Props> = ({ children }) => {
     })
 
     setCurrentBranch(newBranch)
+
+    // ここでbranchのnodeを作成する。
+    const position = {
+      x: branchLength * NODE_WIDTH + (branchLength + 1) * BRANCH_UNIT_X,
+      y: BRANCH_Y,
+    }
+    const newBranchNode = createBranchNode(
+      newBranch.branchName,
+      position,
+      branchName
+    )
+    reactFlowInstance.addNodes(newBranchNode)
 
     toast({
       title: 'ブランチをcheckoutしました',
@@ -382,7 +404,7 @@ export const Home: React.FC<Props> = ({ children }) => {
       data: {
         label: label,
       },
-      width: 200,
+      width: NODE_WIDTH,
       style,
     }
 
