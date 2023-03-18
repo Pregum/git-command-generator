@@ -1,6 +1,6 @@
 import { CommitHistoryImportButton } from '@/components/model/commitHistory/CommitHistoryImportButton'
 import { MyHeader } from '@/components/ui/MyHeader'
-import { Box, Center, Flex, Grid } from '@chakra-ui/react'
+import { Box, Center, Flex, Grid, position } from '@chakra-ui/react'
 import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
 import ReactFlow, {
   ReactFlowProvider,
@@ -12,6 +12,8 @@ import ReactFlow, {
   addEdge,
   EdgeChange,
   NodeChange,
+  Position,
+  NodePositionChange,
 } from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea'
 import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/CustomKeybinding'
@@ -78,6 +80,10 @@ const initialEdges: Edge[] = [
   { id: 'emain-1', source: 'main_root', target: 'i1' },
   { id: 'e1-2', source: 'i1', target: 'i2' },
 ]
+
+function isNodePositionChange(arg: any): arg is NodePositionChange {
+  return arg.position !== undefined
+}
 
 export const Home: React.FC<Props> = ({ children }) => {
   const [message, setMessage] = useState<string>('')
@@ -383,10 +389,10 @@ export const Home: React.FC<Props> = ({ children }) => {
       <MyHeader />
 
       <Flex direction='row' h='100%'>
-        <Grid flex={2} maxW='300px' h='100%'>
+        <Grid flex={3} maxW='600px' h='100%'>
           <CommitHistoryLoader
-            onClickExecute={() => {
-              onClickExecute(message)
+            onClickExecute={(str) => {
+              onClickExecute(str)
               setMessage('')
             }}
             message={message}
@@ -405,8 +411,11 @@ export const Home: React.FC<Props> = ({ children }) => {
               edges={edges}
               nodes={nodes}
               onConnect={onConnect}
-              onEdgesChange={onEdgesChange}
-              onNodesChange={onNodesChange}
+              onEdgesChange={(e: EdgeChange[]) => onEdgesChange(e)}
+              onNodesChange={(e: NodeChange[]) => {
+                const ret = e.filter((node) => !isNodePositionChange(node))
+                onNodesChange(ret)
+              }}
             />
           </Box>
         </Grid>

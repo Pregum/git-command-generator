@@ -1,3 +1,4 @@
+import { PseudoTerminal } from '@/components/ui/PseudoTerminal'
 import { Button, Card, Flex, Grid, Textarea } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -5,6 +6,7 @@ export type Props = React.PropsWithChildren<{
   onClickExecute: (message: string) => void
   message: string
   onChangedMessage: (newValue: string) => void
+  onInput?: (str: string) => void
 }>
 
 export const CommitHistoryLoader: React.FC<Props> = ({
@@ -12,6 +14,7 @@ export const CommitHistoryLoader: React.FC<Props> = ({
   onClickExecute,
   message,
   onChangedMessage,
+  onInput,
 }) => {
   const [value, setValue] = useState(message)
   const onCallback = useCallback(() => {
@@ -22,8 +25,8 @@ export const CommitHistoryLoader: React.FC<Props> = ({
     setValue(message)
   }, [message])
 
-  const handleInputChange = (e: any) => {
-    const inputValue = e.target.value
+  const handleInputChange = (inputValue: any) => {
+    // const inputValue = e.target.value
     setValue(inputValue)
     onChangedMessage(inputValue)
   }
@@ -35,7 +38,7 @@ export const CommitHistoryLoader: React.FC<Props> = ({
           git commandを入力してください
         </Card>
       </Grid>
-      <Grid flex={4} m={2} p={2}>
+      {/* <Grid flex={4} m={2} p={2}>
         <Textarea
           h='100%'
           bg='white'
@@ -48,6 +51,19 @@ export const CommitHistoryLoader: React.FC<Props> = ({
         <Button bg='teal.300' onClick={onCallback}>
           execute!
         </Button>
+      </Grid> */}
+      <Grid flex={4} m={2} p={2}>
+        <PseudoTerminal
+          message={message}
+          onChangedMessage={handleInputChange}
+          onInput={(str) => {
+            const trimmedStr = str.trim()
+            console.log('str:', trimmedStr)
+            // onInput ? onInput(trimmedStr) : onClickExecute(trimmedStr)
+            onClickExecute(trimmedStr)
+          }}
+          // onInput={onInput}
+        />
       </Grid>
     </Flex>
   )
