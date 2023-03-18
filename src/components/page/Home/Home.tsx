@@ -366,7 +366,10 @@ export const Home: React.FC<Props> = ({ children }) => {
       <Flex direction='row' h='100%'>
         <Grid flex={2} maxW='300px' h='100%'>
           <CommitHistoryLoader
-            onClickExecute={onClickExecute}
+            onClickExecute={() => {
+              onClickExecute(message)
+              setMessage('')
+            }}
             message={message}
             onChangedMessage={(newMessage) => setMessage(newMessage)}
           />
