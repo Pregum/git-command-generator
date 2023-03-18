@@ -38,20 +38,6 @@ export const CommitHistoryLoader: React.FC<Props> = ({
           git commandを入力してください
         </Card>
       </Grid>
-      {/* <Grid flex={4} m={2} p={2}>
-        <Textarea
-          h='100%'
-          bg='white'
-          placeholder='git commit -m "hello world!"'
-          value={value}
-          onChange={handleInputChange}
-        />
-      </Grid>
-      <Grid m={2} maxH={20} p='0 0.5rem 0.5rem 0.5rem'>
-        <Button bg='teal.300' onClick={onCallback}>
-          execute!
-        </Button>
-      </Grid> */}
       <Grid flex={4} m={2} p={2}>
         <PseudoTerminal
           message={message}
@@ -59,10 +45,8 @@ export const CommitHistoryLoader: React.FC<Props> = ({
           onInput={(str) => {
             const trimmedStr = str.trim()
             console.log('str:', trimmedStr)
-            // onInput ? onInput(trimmedStr) : onClickExecute(trimmedStr)
-            onClickExecute(trimmedStr)
+            onInput ? onInput(trimmedStr) : onClickExecute(trimmedStr)
           }}
-          // onInput={onInput}
         />
       </Grid>
     </Flex>

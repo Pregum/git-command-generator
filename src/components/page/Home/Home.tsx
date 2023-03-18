@@ -32,11 +32,11 @@ type Branch = {
 
 let nodeId = 0
 
-const initialNodes: Node[] = [
-  {
-    id: 'main_root',
-    position: { x: 45, y: -100 },
-    data: { label: 'main' },
+function createBranchNode(id: string, position: {x: number, y: number}, label: string): Node {
+  const node = {
+    id,
+    position,
+    data: { label },
     style: {
       borderRadius: '50%',
       width: '60px',
@@ -48,7 +48,12 @@ const initialNodes: Node[] = [
     },
     sourcePosition: undefined,
     targetPosition: Position.Bottom,
-  },
+  }
+  return node
+}
+
+const initialNodes: Node[] = [
+  createBranchNode('main_root', { x: 45, y: - 100 }, 'main'),
   {
     id: 'i1',
     position: { x: 0, y: 0 },
@@ -101,25 +106,25 @@ export const Home: React.FC<Props> = ({ children }) => {
 
   const reactFlowInstance = useReactFlow()
   // ref: https://blog.stin.ink/articles/react-hooks-keybind
-  // mac用
-  useCustomKeybinding({
-    key: 'Enter',
-    metaKey: true,
-    onKeyDown: () => {
-      onClickExecute(message)
-      setMessage('')
-    },
-  })
+  // // mac用
+  // useCustomKeybinding({
+  //   key: 'Enter',
+  //   metaKey: true,
+  //   onKeyDown: () => {
+  //     onClickExecute(message)
+  //     setMessage('')
+  //   },
+  // })
 
-  // windows用
-  useCustomKeybinding({
-    key: 'Enter',
-    altKey: true,
-    onKeyDown: () => {
-      onClickExecute(message)
-      setMessage('')
-    },
-  })
+  // // windows用
+  // useCustomKeybinding({
+  //   key: 'Enter',
+  //   altKey: true,
+  //   onKeyDown: () => {
+  //     onClickExecute(message)
+  //     setMessage('')
+  //   },
+  // // })
 
   const toast = useToast()
 
