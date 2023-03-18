@@ -4234,6 +4234,11 @@ react-style-singleton@^2.2.1:
     invariant "^2.2.4"
     tslib "^2.0.0"
 
+react-terminal-ui@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-terminal-ui/-/react-terminal-ui-1.0.1.tgz#a0a6e6f0c194fd47be89a8f67ee4e3b522e75ef5"
+  integrity sha512-XmlG8tB2T2MwafD7TvaPvpPvKh0YWtnuG2tA9c+mqVO940Zy/UQXULvxpKEBEo0YN88yFQvU+bdTNiJBNt97hw==
+
 react@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
