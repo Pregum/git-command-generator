@@ -373,7 +373,7 @@ export const Home: React.FC<Props> = ({ children }) => {
 
     // ここでbranchのnodeを作成する。
     const position = {
-      x: branchLength * NODE_WIDTH + (branchLength + 1) * BRANCH_UNIT_X,
+      x: branchLength * NODE_WIDTH + branchLength * BRANCH_UNIT_X + BRANCH_UNIT_X / 2,
       y: BRANCH_Y,
     }
     const newBranchNode = createBranchNode(
