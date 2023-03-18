@@ -32,6 +32,22 @@ let nodeId = 0
 
 const initialNodes: Node[] = [
   {
+    id: 'main_root',
+    position: { x: 45, y: -100 },
+    data: { label: 'main' },
+    style: {
+      borderRadius: '50%',
+      width: '60px',
+      height: '60px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontWeight: 700,
+    },
+    sourcePosition: undefined,
+    targetPosition: Position.Bottom,
+  },
+  {
     id: 'i1',
     position: { x: 0, y: 0 },
     data: { label: 'first commit' },
@@ -58,7 +74,10 @@ const initialBranches: Branch[] = [
   },
 ]
 
-const initialEdges: Edge[] = [{ id: 'e1-2', source: 'i1', target: 'i2' }]
+const initialEdges: Edge[] = [
+  { id: 'emain-1', source: 'main_root', target: 'i1' },
+  { id: 'e1-2', source: 'i1', target: 'i2' },
+]
 
 export const Home: React.FC<Props> = ({ children }) => {
   const [message, setMessage] = useState<string>('')
