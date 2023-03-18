@@ -60,9 +60,9 @@ function createBranchNode(
   return node
 }
 
-const MAIN_BRANCH_ID =  'main_root'
+const MAIN_BRANCH_ID = 'main'
 
-const initialNodes: Node<{label: string, branchId: string }>[] = [
+const initialNodes: Node<{ label: string; branchId: string }>[] = [
   createBranchNode(MAIN_BRANCH_ID, { x: BRANCH_UNIT_X, y: BRANCH_Y }, 'main'),
   {
     id: 'i1',
@@ -232,8 +232,12 @@ export const Home: React.FC<Props> = ({ children }) => {
       connectEdge(lastNode, newNode)
     }
     // 現在のブランチから初めてのコミットの場合は、ブランチノードから線を伸ばす
-    const lastNodeOfCurrentBranch = [...rfiNodes].find((e) => e.data?.branchId == currentBranch.branchName)
-    const currentBranchNode = [...rfiNodes, newNode].find((e) => e.id == currentBranch.branchName)
+    const lastNodeOfCurrentBranch = [...rfiNodes].find(
+      (e) => e.data?.branchId == currentBranch.branchName
+    )
+    const currentBranchNode = [...rfiNodes, newNode].find(
+      (e) => e.id == currentBranch.branchName
+    )
     if (!lastNodeOfCurrentBranch && currentBranchNode) {
       connectEdge(currentBranchNode, newNode)
     }
@@ -308,6 +312,21 @@ export const Home: React.FC<Props> = ({ children }) => {
       }
       setLatestNode(foundNextLatestNode)
     }
+    const branchNodes = rfiNodes.filter((e) => branches.some((branch) => branch.branchName == e.id))
+    branchNodes.forEach((branchNode) => {
+      if(branchNode.id == branchName) {
+        branchNode.style = {
+          ...branchNode.style,
+          backgroundColor: 'aqua'
+        }
+      } else {
+        branchNode.style = {
+          ...branchNode.style,
+          backgroundColor: 'white'
+        }
+      }
+    })
+
     reactFlowInstance.setNodes(rfiNodes)
 
     toast({
@@ -373,7 +392,10 @@ export const Home: React.FC<Props> = ({ children }) => {
 
     // ここでbranchのnodeを作成する。
     const position = {
-      x: branchLength * NODE_WIDTH + branchLength * BRANCH_UNIT_X + BRANCH_UNIT_X / 2,
+      x:
+        branchLength * NODE_WIDTH +
+        branchLength * BRANCH_UNIT_X +
+        BRANCH_UNIT_X / 2,
       y: BRANCH_Y,
     }
     const newBranchNode = createBranchNode(
@@ -415,16 +437,19 @@ export const Home: React.FC<Props> = ({ children }) => {
     y,
     label,
     style,
-    branchId
+    branchId,
   }: {
     id?: string
     x: number
     y: number
-    label: string,
-    branchId?: string,
+    label: string
+    branchId?: string
     style?: CSSProperties
   }) => {
-    const newNode: Node<{label: string, branchId?: string}, string | undefined> = {
+    const newNode: Node<
+      { label: string; branchId?: string },
+      string | undefined
+    > = {
       id: id ?? `${++nodeId}`,
       position: {
         x: x,
@@ -432,7 +457,7 @@ export const Home: React.FC<Props> = ({ children }) => {
       },
       data: {
         label: label,
-        branchId
+        branchId,
       },
       width: NODE_WIDTH,
       style,
