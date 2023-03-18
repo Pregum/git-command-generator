@@ -372,6 +372,24 @@ export const Home: React.FC<Props> = ({ children }) => {
       position,
       branchName
     )
+    newBranchNode.style = {
+      ...newBranchNode.style,
+      backgroundColor: 'aqua',
+    }
+    reactFlowInstance.addNodes(newBranchNode)
+
+    // ブランチの色を変える
+    const rfiNodes = reactFlowInstance.getNodes()
+    const foundBranchNodes = rfiNodes.filter((node) =>
+      branches.some((b) => b.branchName == node.id)
+    )
+    foundBranchNodes.forEach((branch) => {
+      branch.style = {
+        ...branch.style,
+        backgroundColor: 'white',
+      }
+    })
+    reactFlowInstance.setNodes(rfiNodes)
     reactFlowInstance.addNodes(newBranchNode)
 
     toast({
