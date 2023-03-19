@@ -1,7 +1,7 @@
 import { CommitHistoryImportButton } from '@/components/model/commitHistory/CommitHistoryImportButton'
 import { MyHeader } from '@/components/ui/MyHeader'
-import { Box, Center, Flex, Grid } from '@chakra-ui/react'
-import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
+import { Box, Center, Flex, Grid, position } from '@chakra-ui/react'
+import { CommitHistoryLoader } from '@/components/model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
 import ReactFlow, {
   ReactFlowProvider,
   useReactFlow,
@@ -12,11 +12,19 @@ import ReactFlow, {
   addEdge,
   EdgeChange,
   NodeChange,
+  Position,
+  NodePositionChange,
 } from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea'
 import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/CustomKeybinding'
 import { CSSProperties, useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
+
+const NODE_WIDTH = 150
+const BRANCH_Y = -100
+const BRANCH_WIDTH = 60
+const BRANCH_UNIT_LEFT_MARGIN = (NODE_WIDTH - BRANCH_WIDTH) / 2
+const SEPARATE_UNIT_X = 25
 
 export type Props = React.PropsWithChildren<{}>
 
@@ -30,18 +38,45 @@ type Branch = {
 
 let nodeId = 0
 
-const initialNodes: Node[] = [
+function createBranchNode(
+  id: string,
+  position: { x: number; y: number },
+  label: string
+): Node {
+  const node = {
+    id,
+    position,
+    data: { label },
+    style: {
+      borderRadius: '50%',
+      width: '60px',
+      height: '60px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontWeight: 700,
+    },
+    sourcePosition: undefined,
+    targetPosition: Position.Bottom,
+  }
+  return node
+}
+
+const MAIN_BRANCH_ID = 'main'
+
+const initialNodes: Node<{ label: string; branchId: string }>[] = [
+  createBranchNode(MAIN_BRANCH_ID, { x: BRANCH_UNIT_LEFT_MARGIN, y: BRANCH_Y }, 'main'),
   {
     id: 'i1',
     position: { x: 0, y: 0 },
-    data: { label: 'first commit' },
-    width: 200,
+    data: { label: 'first commit', branchId: MAIN_BRANCH_ID },
+    width: NODE_WIDTH,
   },
   {
     id: 'i2',
     position: { x: 0, y: 100 },
-    data: { label: 'second commit' },
-    width: 200,
+    data: { label: 'second commit', branchId: MAIN_BRANCH_ID },
+    width: NODE_WIDTH,
     style: {
       backgroundColor: 'aqua',
     },
@@ -58,7 +93,14 @@ const initialBranches: Branch[] = [
   },
 ]
 
-const initialEdges: Edge[] = [{ id: 'e1-2', source: 'i1', target: 'i2' }]
+const initialEdges: Edge[] = [
+  { id: 'emain-1', source: MAIN_BRANCH_ID, target: 'i1' },
+  { id: 'e1-2', source: 'i1', target: 'i2' },
+]
+
+function isNodePositionChange(arg: any): arg is NodePositionChange {
+  return arg.position !== undefined
+}
 
 export const Home: React.FC<Props> = ({ children }) => {
   const [message, setMessage] = useState<string>('')
@@ -76,25 +118,25 @@ export const Home: React.FC<Props> = ({ children }) => {
 
   const reactFlowInstance = useReactFlow()
   // ref: https://blog.stin.ink/articles/react-hooks-keybind
-  // mac用
-  useCustomKeybinding({
-    key: 'Enter',
-    metaKey: true,
-    onKeyDown: () => {
-      onClickExecute(message)
-      setMessage('')
-    },
-  })
+  // // mac用
+  // useCustomKeybinding({
+  //   key: 'Enter',
+  //   metaKey: true,
+  //   onKeyDown: () => {
+  //     onClickExecute(message)
+  //     setMessage('')
+  //   },
+  // })
 
-  // windows用
-  useCustomKeybinding({
-    key: 'Enter',
-    altKey: true,
-    onKeyDown: () => {
-      onClickExecute(message)
-      setMessage('')
-    },
-  })
+  // // windows用
+  // useCustomKeybinding({
+  //   key: 'Enter',
+  //   altKey: true,
+  //   onKeyDown: () => {
+  //     onClickExecute(message)
+  //     setMessage('')
+  //   },
+  // // })
 
   const toast = useToast()
 
@@ -158,11 +200,8 @@ export const Home: React.FC<Props> = ({ children }) => {
     let x = defaultX
     let y = defaultY + nodeId * 100
     if (lastNode) {
-      // lastNode = nodes[nodes.length - 1]
-      // x =
-      //   lastNode.position.x +
-      //   (currentBranch.no - 1) * ((lastNode.width ?? 0) + 25)
-      x = (currentBranch.no - 1) * ((lastNode.width ?? 0) + 25)
+      const branchIndex = currentBranch.no - 1
+      x = branchIndex * (lastNode.width ?? 0) + branchIndex * 25
       y = lastNode.position.y + 100
     }
 
@@ -172,6 +211,7 @@ export const Home: React.FC<Props> = ({ children }) => {
       x,
       y,
       label: parsedMessage,
+      branchId: currentBranch.branchName,
       style: { backgroundColor: 'aqua' },
     })
 
@@ -190,6 +230,16 @@ export const Home: React.FC<Props> = ({ children }) => {
     if (lastNode) {
       connectEdge(lastNode, newNode)
     }
+    // 現在のブランチから初めてのコミットの場合は、ブランチノードから線を伸ばす
+    const lastNodeOfCurrentBranch = [...rfiNodes].find(
+      (e) => e.data?.branchId == currentBranch.branchName
+    )
+    const currentBranchNode = [...rfiNodes, newNode].find(
+      (e) => e.id == currentBranch.branchName
+    )
+    if (!lastNodeOfCurrentBranch && currentBranchNode) {
+      connectEdge(currentBranchNode, newNode)
+    }
     reactFlowInstance.fitView({
       minZoom: 0.1,
       nodes: reactFlowInstance.getNodes(),
@@ -201,9 +251,9 @@ export const Home: React.FC<Props> = ({ children }) => {
       prev.latestNodeId = newNode.id
       return prev
     })
+
     toast({
       title: 'ノードを追加しました。',
-      // description: `node id: ${newNode.id}, nodes.length: ${nodes.length}`,
       description: `x: ${x}`,
       status: 'info',
       duration: 3000,
@@ -261,6 +311,21 @@ export const Home: React.FC<Props> = ({ children }) => {
       }
       setLatestNode(foundNextLatestNode)
     }
+    const branchNodes = rfiNodes.filter((e) => branches.some((branch) => branch.branchName == e.id))
+    branchNodes.forEach((branchNode) => {
+      if(branchNode.id == branchName) {
+        branchNode.style = {
+          ...branchNode.style,
+          backgroundColor: 'aqua'
+        }
+      } else {
+        branchNode.style = {
+          ...branchNode.style,
+          backgroundColor: 'white'
+        }
+      }
+    })
+
     reactFlowInstance.setNodes(rfiNodes)
 
     toast({
@@ -306,6 +371,8 @@ export const Home: React.FC<Props> = ({ children }) => {
       return
     }
 
+    const branchLengthWithoutNewBranch = branches.length
+
     // ここで横にずらす
     const newBranch: Branch = {
       branchName: branchName,
@@ -322,6 +389,39 @@ export const Home: React.FC<Props> = ({ children }) => {
 
     setCurrentBranch(newBranch)
 
+    // ここでbranchのnodeを作成する。
+    const position = {
+      // x: branchLength * (NODE_WIDTH + BRANCH_UNIT_X) + (branchLength - 1) * BRANCH_UNIT_X / 2,
+        x: branchLengthWithoutNewBranch * NODE_WIDTH +
+        BRANCH_UNIT_LEFT_MARGIN +
+        branchLengthWithoutNewBranch * SEPARATE_UNIT_X,
+      y: BRANCH_Y,
+    }
+    const newBranchNode = createBranchNode(
+      newBranch.branchName,
+      position,
+      branchName
+    )
+    newBranchNode.style = {
+      ...newBranchNode.style,
+      backgroundColor: 'aqua',
+    }
+    reactFlowInstance.addNodes(newBranchNode)
+
+    // ブランチの色を変える
+    const rfiNodes = reactFlowInstance.getNodes()
+    const foundBranchNodes = rfiNodes.filter((node) =>
+      branches.some((b) => b.branchName == node.id)
+    )
+    foundBranchNodes.forEach((branch) => {
+      branch.style = {
+        ...branch.style,
+        backgroundColor: 'white',
+      }
+    })
+    reactFlowInstance.setNodes(rfiNodes)
+    reactFlowInstance.addNodes(newBranchNode)
+
     toast({
       title: 'ブランチをcheckoutしました',
       description: `新しいブランチ名: ${branchName}`,
@@ -336,14 +436,19 @@ export const Home: React.FC<Props> = ({ children }) => {
     y,
     label,
     style,
+    branchId,
   }: {
     id?: string
     x: number
     y: number
     label: string
+    branchId?: string
     style?: CSSProperties
   }) => {
-    const newNode: Node<any, string | undefined> = {
+    const newNode: Node<
+      { label: string; branchId?: string },
+      string | undefined
+    > = {
       id: id ?? `${++nodeId}`,
       position: {
         x: x,
@@ -351,8 +456,9 @@ export const Home: React.FC<Props> = ({ children }) => {
       },
       data: {
         label: label,
+        branchId,
       },
-      width: 200,
+      width: NODE_WIDTH,
       style,
     }
 
@@ -364,10 +470,10 @@ export const Home: React.FC<Props> = ({ children }) => {
       <MyHeader />
 
       <Flex direction='row' h='100%'>
-        <Grid flex={2} maxW='300px' h='100%'>
+        <Grid flex={3} maxW='600px' h='100%'>
           <CommitHistoryLoader
-            onClickExecute={() => {
-              onClickExecute(message)
+            onClickExecute={(str) => {
+              onClickExecute(str)
               setMessage('')
             }}
             message={message}
@@ -386,8 +492,11 @@ export const Home: React.FC<Props> = ({ children }) => {
               edges={edges}
               nodes={nodes}
               onConnect={onConnect}
-              onEdgesChange={onEdgesChange}
-              onNodesChange={onNodesChange}
+              onEdgesChange={(e: EdgeChange[]) => onEdgesChange(e)}
+              onNodesChange={(e: NodeChange[]) => {
+                const ret = e.filter((node) => !isNodePositionChange(node))
+                onNodesChange(ret)
+              }}
             />
           </Box>
         </Grid>
