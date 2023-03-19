@@ -1,7 +1,7 @@
 import { CommitHistoryImportButton } from '@/components/model/commitHistory/CommitHistoryImportButton'
 import { MyHeader } from '@/components/ui/MyHeader'
 import { Box, Center, Flex, Grid, position } from '@chakra-ui/react'
-import { CommitHistoryLoader } from '../../model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
+import { CommitHistoryLoader } from '@/components/model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
 import ReactFlow, {
   ReactFlowProvider,
   useReactFlow,
@@ -20,9 +20,11 @@ import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/Cust
 import { CSSProperties, useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 
-const NODE_WIDTH = 200
+const NODE_WIDTH = 150
 const BRANCH_Y = -100
-const BRANCH_UNIT_X = 45
+const BRANCH_WIDTH = 60
+const BRANCH_UNIT_LEFT_MARGIN = (NODE_WIDTH - BRANCH_WIDTH) / 2
+const SEPARATE_UNIT_X = 25
 
 export type Props = React.PropsWithChildren<{}>
 
@@ -63,7 +65,7 @@ function createBranchNode(
 const MAIN_BRANCH_ID = 'main'
 
 const initialNodes: Node<{ label: string; branchId: string }>[] = [
-  createBranchNode(MAIN_BRANCH_ID, { x: BRANCH_UNIT_X, y: BRANCH_Y }, 'main'),
+  createBranchNode(MAIN_BRANCH_ID, { x: BRANCH_UNIT_LEFT_MARGIN, y: BRANCH_Y }, 'main'),
   {
     id: 'i1',
     position: { x: 0, y: 0 },
@@ -198,11 +200,8 @@ export const Home: React.FC<Props> = ({ children }) => {
     let x = defaultX
     let y = defaultY + nodeId * 100
     if (lastNode) {
-      // lastNode = nodes[nodes.length - 1]
-      // x =
-      //   lastNode.position.x +
-      //   (currentBranch.no - 1) * ((lastNode.width ?? 0) + 25)
-      x = (currentBranch.no - 1) * ((lastNode.width ?? 0) + 25)
+      const branchIndex = currentBranch.no - 1
+      x = branchIndex * (lastNode.width ?? 0) + branchIndex * 25
       y = lastNode.position.y + 100
     }
 
@@ -372,7 +371,7 @@ export const Home: React.FC<Props> = ({ children }) => {
       return
     }
 
-    const branchLength = branches.length
+    const branchLengthWithoutNewBranch = branches.length
 
     // ここで横にずらす
     const newBranch: Branch = {
@@ -392,10 +391,10 @@ export const Home: React.FC<Props> = ({ children }) => {
 
     // ここでbranchのnodeを作成する。
     const position = {
-      x:
-        branchLength * NODE_WIDTH +
-        branchLength * BRANCH_UNIT_X +
-        BRANCH_UNIT_X / 2,
+      // x: branchLength * (NODE_WIDTH + BRANCH_UNIT_X) + (branchLength - 1) * BRANCH_UNIT_X / 2,
+        x: branchLengthWithoutNewBranch * NODE_WIDTH +
+        BRANCH_UNIT_LEFT_MARGIN +
+        branchLengthWithoutNewBranch * SEPARATE_UNIT_X,
       y: BRANCH_Y,
     }
     const newBranchNode = createBranchNode(
