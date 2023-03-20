@@ -22,6 +22,7 @@
     "eslint-config-next": "13.1.6",
     "framer-motion": "^9.0.2",
     "git-log-parser": "^1.2.0",
+    "jotai": "^2.0.3",
     "next": "13.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
