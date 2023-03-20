@@ -1,6 +1,6 @@
 ---
-name: 'elements'
-root: './src/components/elements'
+name: 'layouts'
+root: './src/components/layouts'
 output: '.'
 questions:
   name: 'Please enter a element name.'
@@ -12,7 +12,7 @@ questions:
 # `{{ inputs.name | camel }}/index.ts`
 
 ```typescript
-export * from './{{ inputs.name | pascal }}';
+export * from './{{ inputs.name }}';
 ```
 
 # `{{ inputs.name | camel }}/{{ inputs.name | pascal }}.tsx`
@@ -28,7 +28,7 @@ export const {{ inputs.name | pascal }}: React.FC<Props> = ({ children }) => {
 # `{{ !inputs.story && '!' }}{{ inputs.name | camel }}/{{ inputs.name | pascal }}.stories.tsx`
 
 ```typescript
-import { {{ inputs.name | pascal }} } from './{{ inputs.name | pascal }}';
+import { {{ inputs.name | pascal }} } from './{{ inputs.name | camel }}';
 
 export default { component: {{ inputs.name | pascal }} };
 export const Overview = { args: {} };
