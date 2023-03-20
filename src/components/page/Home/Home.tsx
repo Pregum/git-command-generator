@@ -19,6 +19,7 @@ import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramC
 import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/CustomKeybinding'
 import { CSSProperties, useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
+import * as crypto from 'crypto'
 
 const NODE_WIDTH = 150
 const BRANCH_Y = -100
@@ -41,12 +42,17 @@ let nodeId = 0
 function createBranchNode(
   id: string,
   position: { x: number; y: number },
-  label: string
+  label: string,
+  hash?: string
 ): Node {
+  const hashStr = hash ? hash : sha1()
   const node = {
     id,
     position,
-    data: { label },
+    data: {
+      label,
+      hash: hashStr,
+    },
     style: {
       borderRadius: '50%',
       width: '60px',
@@ -62,10 +68,28 @@ function createBranchNode(
   return node
 }
 
+function sha1(rawInput?: string): string {
+  const hash = crypto.createHash('sha1')
+  const sss = crypto.randomBytes(20).toString('hex')
+  const input = rawInput ? rawInput : sss
+  hash.update(input)
+  return hash.digest('hex')
+}
+
 const MAIN_BRANCH_ID = 'main'
 
-const initialNodes: Node<{ label: string; branchId: string }>[] = [
-  createBranchNode(MAIN_BRANCH_ID, { x: BRANCH_UNIT_LEFT_MARGIN, y: BRANCH_Y }, 'main'),
+type Revision = {
+  label: string
+  branchId?: string
+  hash: string
+}
+
+const initialNodes: Node<Revision>[] = [
+  createBranchNode(
+    MAIN_BRANCH_ID,
+    { x: BRANCH_UNIT_LEFT_MARGIN, y: BRANCH_Y },
+    'main'
+  ),
   {
     id: 'i1',
     position: { x: 0, y: 0 },
@@ -311,17 +335,19 @@ export const Home: React.FC<Props> = ({ children }) => {
       }
       setLatestNode(foundNextLatestNode)
     }
-    const branchNodes = rfiNodes.filter((e) => branches.some((branch) => branch.branchName == e.id))
+    const branchNodes = rfiNodes.filter((e) =>
+      branches.some((branch) => branch.branchName == e.id)
+    )
     branchNodes.forEach((branchNode) => {
-      if(branchNode.id == branchName) {
+      if (branchNode.id == branchName) {
         branchNode.style = {
           ...branchNode.style,
-          backgroundColor: 'aqua'
+          backgroundColor: 'aqua',
         }
       } else {
         branchNode.style = {
           ...branchNode.style,
-          backgroundColor: 'white'
+          backgroundColor: 'white',
         }
       }
     })
@@ -392,7 +418,8 @@ export const Home: React.FC<Props> = ({ children }) => {
     // ここでbranchのnodeを作成する。
     const position = {
       // x: branchLength * (NODE_WIDTH + BRANCH_UNIT_X) + (branchLength - 1) * BRANCH_UNIT_X / 2,
-        x: branchLengthWithoutNewBranch * NODE_WIDTH +
+      x:
+        branchLengthWithoutNewBranch * NODE_WIDTH +
         BRANCH_UNIT_LEFT_MARGIN +
         branchLengthWithoutNewBranch * SEPARATE_UNIT_X,
       y: BRANCH_Y,
@@ -445,10 +472,9 @@ export const Home: React.FC<Props> = ({ children }) => {
     branchId?: string
     style?: CSSProperties
   }) => {
-    const newNode: Node<
-      { label: string; branchId?: string },
-      string | undefined
-    > = {
+    const hashStr = sha1()
+
+    const newNode: Node<Revision, string | undefined> = {
       id: id ?? `${++nodeId}`,
       position: {
         x: x,
@@ -457,6 +483,7 @@ export const Home: React.FC<Props> = ({ children }) => {
       data: {
         label: label,
         branchId,
+        hash: hashStr,
       },
       width: NODE_WIDTH,
       style,
