@@ -6,17 +6,13 @@ export type Props = React.PropsWithChildren<{
   onEdgesChange: OnEdgesChange
   onNodesChange: OnNodesChange
 }>
-import React, { useCallback } from 'react'
+import React from 'react'
 import ReactFlow, {
-  addEdge,
   Background,
   BackgroundVariant,
   Controls,
   MiniMap,
   ReactFlowInstance,
-  useEdgesState,
-  useNodesState,
-  useReactFlow,
   Node,
   Edge,
   OnEdgesChange,
@@ -26,8 +22,6 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 
 export const DiagramCanvasDrawArea: React.FC<Props> = ({
-  children,
-  reactFlowInstance,
   nodes,
   edges,
   onConnect,

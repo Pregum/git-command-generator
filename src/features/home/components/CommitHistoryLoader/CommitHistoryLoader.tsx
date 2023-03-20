@@ -1,4 +1,4 @@
-import { PseudoTerminal } from '@/components/ui/PseudoTerminal'
+import { PseudoTerminal } from '@/features/home/components/PseudoTerminal'
 import { Button, Card, Flex, Grid, Textarea } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 

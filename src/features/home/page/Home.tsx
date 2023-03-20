@@ -1,7 +1,6 @@
-import { CommitHistoryImportButton } from '@/components/model/commitHistory/CommitHistoryImportButton'
-import { MyHeader } from '@/components/ui/MyHeader'
+import { MyHeader } from '@/components/layouts/MyHeader'
 import { Box, Center, Flex, Grid, position } from '@chakra-ui/react'
-import { CommitHistoryLoader } from '@/components/model/commitHistory/CommitHistoryLoader/CommitHistoryLoader'
+import { CommitHistoryLoader } from '@/features/home/components/CommitHistoryLoader/CommitHistoryLoader'
 import ReactFlow, {
   ReactFlowProvider,
   useReactFlow,
@@ -15,8 +14,8 @@ import ReactFlow, {
   Position,
   NodePositionChange,
 } from 'reactflow'
-import { DiagramCanvasDrawArea } from '@/components/model/diagramCanvas/DiagramCanvasDrawArea'
-import { useCustomKeybinding as useCustomKeybinding } from '@/components/ui/CustomKeybinding'
+import { DiagramCanvasDrawArea } from '@/features/home/components/DiagramCanvasDrawArea'
+import { useCustomKeybinding as useCustomKeybinding } from '@/components/layouts/CustomKeybinding'
 import { CSSProperties, useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 import * as crypto from 'crypto'
