@@ -1,4 +1,4 @@
-import { HomePage } from '@/features/home/page/Home.page'
+import { HomePage } from '@/features/home/pages/Home.page'
 
 export const App = () => <HomePage />
 
