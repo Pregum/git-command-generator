@@ -1,8 +1,7 @@
 import { MyHeader } from '@/components/layouts/MyHeader'
-import { Box, Center, Flex, Grid, position } from '@chakra-ui/react'
+import { Box, Flex, Grid } from '@chakra-ui/react'
 import { CommitHistoryLoader } from '@/features/home/components/CommitHistoryLoader/CommitHistoryLoader'
-import ReactFlow, {
-  ReactFlowProvider,
+import {
   useReactFlow,
   Node,
   Edge,
@@ -11,17 +10,19 @@ import ReactFlow, {
   addEdge,
   EdgeChange,
   NodeChange,
-  Position,
   NodePositionChange,
 } from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/features/home/components/DiagramCanvasDrawArea'
-import { useCustomKeybinding as useCustomKeybinding } from '@/components/layouts/CustomKeybinding'
 import { CSSProperties, useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 import * as crypto from 'crypto'
 import { Revision } from '../types/revision'
 import { Branch } from '../types/branch'
 import useConnectEdge from '../hooks/useConnectEdge'
+import createBranchNode from '../utils/createBranchNode'
+import { BranchNode } from '../types/branchNode'
+import sha1 from '../utils/sha1'
+import useMyNode from '../hooks/useMyNode'
 
 const NODE_WIDTH = 150
 const BRANCH_Y = -100
@@ -31,49 +32,11 @@ const SEPARATE_UNIT_X = 25
 
 export type Props = React.PropsWithChildren<{}>
 
-
 let nodeId = 0
-
-function createBranchNode(
-  id: string,
-  position: { x: number; y: number },
-  label: string,
-  hash?: string
-): Node {
-  const hashStr = hash ? hash : sha1()
-  const node = {
-    id,
-    position,
-    data: {
-      label,
-      hash: hashStr,
-    },
-    style: {
-      borderRadius: '50%',
-      width: '60px',
-      height: '60px',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      fontWeight: 700,
-    },
-    sourcePosition: undefined,
-    targetPosition: Position.Bottom,
-  }
-  return node
-}
-
-function sha1(rawInput?: string): string {
-  const hash = crypto.createHash('sha1')
-  const sss = crypto.randomBytes(20).toString('hex')
-  const input = rawInput ? rawInput : sss
-  hash.update(input)
-  return hash.digest('hex')
-}
 
 const MAIN_BRANCH_ID = 'main'
 
-const initialNodes: Node<Revision>[] = [
+const initialNodes: Node<BranchNode>[] = [
   createBranchNode(
     MAIN_BRANCH_ID,
     { x: BRANCH_UNIT_LEFT_MARGIN, y: BRANCH_Y },
@@ -124,7 +87,8 @@ export const Home: React.FC<Props> = ({ children }) => {
   )
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
-  const { connectEdge: myConnectEdge  } = useConnectEdge()
+  const { connectEdge: myConnectEdge } = useConnectEdge()
+  const { createNode } = useMyNode()
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
@@ -188,23 +152,6 @@ export const Home: React.FC<Props> = ({ children }) => {
     }
   }
 
-  const connectEdge = (fromNode: Node, toNode: Node) => {
-    const edge: Edge = {
-      id: `e${fromNode.id}-${toNode.id}`,
-      source: fromNode.id,
-      target: toNode.id,
-    }
-    reactFlowInstance.addEdges(edge)
-
-    toast({
-      title: 'エッジを追加しました。',
-      description: `edge id: ${edge.id}`,
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    })
-  }
-
   const commitAction = (parsedMessage: string) => {
     // 空文字の場合は処理終了
     if (!parsedMessage.length) {
@@ -221,7 +168,7 @@ export const Home: React.FC<Props> = ({ children }) => {
     }
 
     const id = `${++nodeId}`
-    const newNode = generateNewNode({
+    const newNode = createNode({
       id,
       x,
       y,
@@ -408,7 +355,6 @@ export const Home: React.FC<Props> = ({ children }) => {
 
     // ここでbranchのnodeを作成する。
     const position = {
-      // x: branchLength * (NODE_WIDTH + BRANCH_UNIT_X) + (branchLength - 1) * BRANCH_UNIT_X / 2,
       x:
         branchLengthWithoutNewBranch * NODE_WIDTH +
         BRANCH_UNIT_LEFT_MARGIN +
@@ -446,41 +392,6 @@ export const Home: React.FC<Props> = ({ children }) => {
       status: 'success',
       isClosable: true,
     })
-  }
-
-  const generateNewNode = ({
-    id,
-    x,
-    y,
-    label,
-    style,
-    branchId,
-  }: {
-    id?: string
-    x: number
-    y: number
-    label: string
-    branchId?: string
-    style?: CSSProperties
-  }) => {
-    const hashStr = sha1()
-
-    const newNode: Node<Revision, string | undefined> = {
-      id: id ?? `${++nodeId}`,
-      position: {
-        x: x,
-        y: y,
-      },
-      data: {
-        label: label,
-        branchId,
-        hash: hashStr,
-      },
-      width: NODE_WIDTH,
-      style,
-    }
-
-    return newNode
   }
 
   return (
