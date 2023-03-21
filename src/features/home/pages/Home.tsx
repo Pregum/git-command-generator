@@ -15,10 +15,8 @@ import { DiagramCanvasDrawArea } from '@/features/home/components/DiagramCanvasD
 import { useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { Branch } from '../types/branch'
-import useConnectEdge from '../hooks/useConnectEdge'
 import createBranchNode from '../utils/createBranchNode'
 import { BranchNode } from '../types/branchNode'
-import useMyNode from '../hooks/useMyNode'
 import isNodePositionChange from '../utils/isNodePositionChange'
 import useCommitAction from '../hooks/useCommitAction'
 import useCheckoutNewAction from '../hooks/useCheckoutNewAction'
@@ -28,11 +26,8 @@ const NODE_WIDTH = 150
 const BRANCH_Y = -100
 const BRANCH_WIDTH = 60
 const BRANCH_UNIT_LEFT_MARGIN = (NODE_WIDTH - BRANCH_WIDTH) / 2
-const SEPARATE_UNIT_X = 25
 
 export type Props = React.PropsWithChildren<{}>
-
-let nodeId = 0
 
 const MAIN_BRANCH_ID = 'main'
 
