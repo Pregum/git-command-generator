@@ -10,7 +10,9 @@ export default function createNode({
   label,
   style,
   branchId,
-  width
+  width,
+  merge1Id,
+  merge2Id,
 }: {
   id: string
   x: number
@@ -19,6 +21,8 @@ export default function createNode({
   branchId?: string
   style?: CSSProperties
   width: number
+  merge1Id?: string
+  merge2Id?: string
 }) {
   const hashStr = sha1()
 
@@ -32,6 +36,8 @@ export default function createNode({
       label: label,
       branchId,
       hash: hashStr,
+      merge1Id,
+      merge2Id,
     },
     width,
     style,

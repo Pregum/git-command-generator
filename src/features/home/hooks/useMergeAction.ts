@@ -78,11 +78,15 @@ export default function useMergeAction() {
       return
     }
 
+    // 別のコミット挟むとマージできてしまうので今のブランチに含まれるコミット全てのmerge2Idを検索する
+    const currentBranchNodes = rfiNodes.filter((node) => node.data?.branchId == currentBranch.branchName)
+    const hasBeenMerged = currentBranchNodes.find((node) => node.data?.merge2Id == anotherLatestNode.id)
+
     // 同じidの場合はマージできないので弾く
-    if (latestNode.id == anotherLatestNode.id) {
+    if (hasBeenMerged || latestNode.data.merge2Id == anotherLatestNode.id) {
       toast({
-        title: '同一のブランチのマージはできません',
-        description: `branch id: ${currentBranch.branchName}, another branch id: ${anotherLatestNode.id}`,
+        title: '既にマージ済みです',
+        description: `latest id: ${latestNode.id}, another latest id: ${anotherLatestNode.id}`,
         status: 'error',
         isClosable: true,
       })
@@ -108,13 +112,20 @@ export default function useMergeAction() {
       label: sentence,
       x,
       y,
+      branchId: currentBranch.branchName,
+      merge1Id: latestNode.id,
+      merge2Id: anotherLatestNode.id,
     })
 
-    // ここで色の更新をかける
-    latestNode.style = {
-      ...latestNode.style,
-      backgroundColor: 'white',
+    const foundLatestNode = rfiNodes.find((node) => node.id == latestNode.id)
+    if (foundLatestNode) {
+      foundLatestNode.style = {
+        ...foundLatestNode.style,
+        backgroundColor: 'white',
+      }
     }
+
+    // ここで色の更新をかける
     branchNode.style = {
       ...branchNode.style,
       backgroundColor: 'white',

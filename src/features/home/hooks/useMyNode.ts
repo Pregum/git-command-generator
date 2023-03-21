@@ -15,6 +15,8 @@ export default function useMyNode() {
     style,
     branchId,
     width,
+    merge1Id,
+    merge2Id,
   }: {
     id?: string
     x: number
@@ -23,6 +25,8 @@ export default function useMyNode() {
     branchId?: string
     style?: CSSProperties
     width?: number
+    merge1Id?: string
+    merge2Id?: string
   }) => {
     let newNodeIdStr = id
     if (newNodeIdStr === undefined) {
@@ -41,6 +45,8 @@ export default function useMyNode() {
       style,
       branchId,
       width: validatedWidth,
+      merge1Id,
+      merge2Id,
     })
   }
 
