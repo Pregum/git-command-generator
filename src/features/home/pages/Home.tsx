@@ -21,61 +21,17 @@ import isNodePositionChange from '../utils/isNodePositionChange'
 import useCommitAction from '../hooks/useCommitAction'
 import useCheckoutNewAction from '../hooks/useCheckoutNewAction'
 import useCheckoutAction from '../hooks/useCheckoutAction'
-
-const NODE_WIDTH = 150
-const BRANCH_Y = -100
-const BRANCH_WIDTH = 60
-const BRANCH_UNIT_LEFT_MARGIN = (NODE_WIDTH - BRANCH_WIDTH) / 2
+import { branchesAtom, currentBranchAtom, latestNodeAtom } from '../stores/atom'
+import { useAtom } from 'jotai'
+import { initialEdges, initialNodes } from '../const/constants'
 
 export type Props = React.PropsWithChildren<{}>
 
-const MAIN_BRANCH_ID = 'main'
-
-const initialNodes: Node<BranchNode>[] = [
-  createBranchNode(
-    MAIN_BRANCH_ID,
-    { x: BRANCH_UNIT_LEFT_MARGIN, y: BRANCH_Y },
-    'main'
-  ),
-  {
-    id: 'i1',
-    position: { x: 0, y: 0 },
-    data: { label: 'first commit', branchId: MAIN_BRANCH_ID },
-    width: NODE_WIDTH,
-  },
-  {
-    id: 'i2',
-    position: { x: 0, y: 100 },
-    data: { label: 'second commit', branchId: MAIN_BRANCH_ID },
-    width: NODE_WIDTH,
-    style: {
-      backgroundColor: 'aqua',
-    },
-  },
-]
-
-const initialBranches: Branch[] = [
-  {
-    branchName: 'main',
-    no: 1,
-    rootNodeId: initialNodes[initialNodes.length - 1].id,
-    currentNodeId: initialNodes[initialNodes.length - 1].id,
-    latestNodeId: initialNodes[initialNodes.length - 1].id,
-  },
-]
-
-const initialEdges: Edge[] = [
-  { id: 'emain-1', source: MAIN_BRANCH_ID, target: 'i1' },
-  { id: 'e1-2', source: 'i1', target: 'i2' },
-]
-
 export const Home: React.FC<Props> = ({}) => {
   const [message, setMessage] = useState<string>('')
-  const [currentBranch, setCurrentBranch] = useState<Branch>(initialBranches[0])
-  const [branches, setBranches] = useState<Branch[]>(initialBranches)
-  const [latestNode, setLatestNode] = useState<Node>(
-    initialNodes[initialNodes.length - 1]
-  )
+  const [currentBranch, setCurrentBranch] = useAtom(currentBranchAtom)
+  const [branches, setBranches] = useAtom(branchesAtom)
+  const [latestNode, setLatestNode] = useAtom(latestNodeAtom)
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
   const {
