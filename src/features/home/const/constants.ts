@@ -8,6 +8,7 @@ export const BRANCH_Y = -100
 export const BRANCH_WIDTH = 60
 export const BRANCH_UNIT_LEFT_MARGIN = (NODE_WIDTH - BRANCH_WIDTH) / 2
 export const SEPARATE_UNIT_X = 25
+export const SEPARATE_UNIT_Y = 100
 export const MAIN_BRANCH_ID = 'main'
 
 export const initialNodes: Node<BranchNode>[] = [
@@ -24,7 +25,7 @@ export const initialNodes: Node<BranchNode>[] = [
   },
   {
     id: 'i2',
-    position: { x: 0, y: 100 },
+    position: { x: 0, y: SEPARATE_UNIT_Y },
     data: { label: 'second commit', branchId: MAIN_BRANCH_ID },
     width: NODE_WIDTH,
     style: {

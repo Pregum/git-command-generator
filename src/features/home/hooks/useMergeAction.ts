@@ -9,6 +9,7 @@ import {
   defaultXAtom,
   defaultYAtom,
   separateUnitXAtom,
+  separateUnitYAtom,
 } from '../stores/atom'
 import useConnectEdge from './useConnectEdge'
 import useMyNode from './useMyNode'
@@ -18,12 +19,13 @@ export default function useMergeAction() {
   const reactFlowInstance = useReactFlow()
 
   const [nodeId, setNodeId] = useAtom(nodeIdAtom)
-  const [branches, setBranches] = useAtom(branchesAtom)
+  const [branches] = useAtom(branchesAtom)
   const [currentBranch, setCurrentBranch] = useAtom(currentBranchAtom)
   const [latestNode, setLatestNode] = useAtom(latestNodeAtom)
   const [defaultX] = useAtom(defaultXAtom)
   const [defaultY] = useAtom(defaultYAtom)
   const [separateUnitX] = useAtom(separateUnitXAtom)
+  const [separateUnitY] = useAtom(separateUnitYAtom)
 
   const { createNode } = useMyNode()
   const { connectEdge } = useConnectEdge()
@@ -112,7 +114,7 @@ export default function useMergeAction() {
     setNodeId(newId)
     const sentence = `Merge branch '${anotherBranchName}' into ${currentBranch.branchName}`
     let x = defaultX
-    let y = defaultY + nodeId * 100
+    let y = defaultY + nodeId * separateUnitY
     if (latestNode) {
       const branchIndex = currentBranch.no - 1
       x = branchIndex * (latestNode.width ?? 0) + branchIndex * separateUnitX

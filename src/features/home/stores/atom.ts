@@ -6,6 +6,7 @@ import {
   initialNodes,
   NODE_WIDTH,
   SEPARATE_UNIT_X,
+  SEPARATE_UNIT_Y,
 } from '../const/constants'
 import { Branch } from '../types/branch'
 import { Node } from 'reactflow'
@@ -17,6 +18,7 @@ export const branchUnitLeftMarginAtom = atom(
   (get) => (get(nodeWidthAtom) - get(branchWidthAtom)) / 2
 )
 export const separateUnitXAtom = atom((_) => SEPARATE_UNIT_X)
+export const separateUnitYAtom = atom(() => SEPARATE_UNIT_Y)
 export const nodeIdAtom = atom(0)
 
 export const defaultYAtom = atom(() => 100)
