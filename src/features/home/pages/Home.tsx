@@ -24,6 +24,7 @@ import useCheckoutAction from '../hooks/useCheckoutAction'
 import { branchesAtom, currentBranchAtom, latestNodeAtom } from '../stores/atom'
 import { useAtom } from 'jotai'
 import { initialEdges, initialNodes } from '../const/constants'
+import useMergeAction from '../hooks/useMergeAction'
 
 export type Props = React.PropsWithChildren<{}>
 
@@ -62,6 +63,8 @@ export const Home: React.FC<Props> = ({}) => {
       setLatestNode,
     })
 
+  const { mergeAction, matchMergeAction, parseMergeAction } = useMergeAction()
+
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -98,6 +101,8 @@ export const Home: React.FC<Props> = ({}) => {
       checkoutAction(parseCheckoutAction(message))
     } else if (matchCommitPattern(message)) {
       myCommitAction(parseCommitInput(message))
+    } else if (matchMergeAction(message)) {
+      mergeAction(parseMergeAction(message))
     } else {
       toast({
         title: 'コマンドが不正です',
