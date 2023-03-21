@@ -38,6 +38,16 @@ export default function useMergeAction() {
       return
     }
 
+    if (currentBranch.branchName == anotherBranchName) {
+      toast({
+        title: '同一ブランチはマージ対象にできません',
+        description: `現ブランチ名: ${currentBranch.branchName}, マージ対象ブランチ名: ${anotherBranchName}`,
+        status: 'error',
+        isClosable: true,
+      })
+      return
+    }
+
     const foundAnotherBranch = branches.find(
       (branch) => branch.branchName == anotherBranchName
     )
@@ -79,8 +89,12 @@ export default function useMergeAction() {
     }
 
     // 別のコミット挟むとマージできてしまうので今のブランチに含まれるコミット全てのmerge2Idを検索する
-    const currentBranchNodes = rfiNodes.filter((node) => node.data?.branchId == currentBranch.branchName)
-    const hasBeenMerged = currentBranchNodes.find((node) => node.data?.merge2Id == anotherLatestNode.id)
+    const currentBranchNodes = rfiNodes.filter(
+      (node) => node.data?.branchId == currentBranch.branchName
+    )
+    const hasBeenMerged = currentBranchNodes.find(
+      (node) => node.data?.merge2Id == anotherLatestNode.id
+    )
 
     // 同じidの場合はマージできないので弾く
     if (hasBeenMerged || latestNode.data.merge2Id == anotherLatestNode.id) {
