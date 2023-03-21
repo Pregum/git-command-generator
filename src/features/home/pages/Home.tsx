@@ -20,6 +20,9 @@ import createBranchNode from '../utils/createBranchNode'
 import { BranchNode } from '../types/branchNode'
 import useMyNode from '../hooks/useMyNode'
 import isNodePositionChange from '../utils/isNodePositionChange'
+import useCommitAction from '../hooks/useCommitAction'
+import useCheckoutNewAction from '../hooks/useCheckoutNewAction'
+import useCheckoutAction from '../hooks/useCheckoutAction'
 
 const NODE_WIDTH = 150
 const BRANCH_Y = -100
@@ -71,7 +74,7 @@ const initialEdges: Edge[] = [
   { id: 'e1-2', source: 'i1', target: 'i2' },
 ]
 
-export const Home: React.FC<Props> = ({ }) => {
+export const Home: React.FC<Props> = ({}) => {
   const [message, setMessage] = useState<string>('')
   const [currentBranch, setCurrentBranch] = useState<Branch>(initialBranches[0])
   const [branches, setBranches] = useState<Branch[]>(initialBranches)
@@ -80,8 +83,33 @@ export const Home: React.FC<Props> = ({ }) => {
   )
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
-  const { connectEdge: myConnectEdge } = useConnectEdge()
-  const { createNode } = useMyNode()
+  const {
+    commitAction: myCommitAction,
+    matchCommitPattern,
+    parseCommitInput,
+  } = useCommitAction({
+    latestNode,
+    setLatestNode,
+    currentBranch,
+    setCurrentBranch,
+  })
+  const {
+    checkoutNewBranchAction,
+    matchCheckoutNewAction,
+    parseCheckoutNewAction,
+  } = useCheckoutNewAction({
+    branches,
+    setBranches,
+    latestNode,
+    setCurrentBranch,
+  })
+  const { checkoutAction, matchCheckoutAction, parseCheckoutAction } =
+    useCheckoutAction({
+      branches,
+      setCurrentBranch,
+      latestNode,
+      setLatestNode,
+    })
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
@@ -112,28 +140,13 @@ export const Home: React.FC<Props> = ({ }) => {
 
   const toast = useToast()
 
-  const defaultY = 100
-  const defaultX = 0
-
-  const onClickExecute = (message: String) => {
-    let parsedMessage = ''
-    // const commitRegex = /git\s+commit\s+(?:(?:-m)?\s+)?[\"\'](?<mes>[\w\_\-]+)[\"\']/
-    const commitRegex =
-      /git\s+commit\s+(?:-m\s+)(?<quote>["'])(?<mes>[\w\_\-\s]+)\k<quote>/
-    const checkoutNewBranchRegex =
-      /git\s+checkout\s+-b\s+(?<branchName>[\w\_\-]+)/
-    const checkoutRegex = /git\s+checkout\s+(?<branchName>[\w\_\-]+)/
-
-    if (message.match(checkoutNewBranchRegex)) {
-      const branchName =
-        message.match(checkoutNewBranchRegex)?.groups?.branchName ?? ''
-      checkoutNewBranchAction(branchName)
-    } else if (message.match(checkoutRegex)) {
-      const branchName = message.match(checkoutRegex)?.groups?.branchName ?? ''
-      checkoutAction(branchName)
-    } else if (message.match(commitRegex)) {
-      parsedMessage = message.match(commitRegex)?.groups?.mes ?? ''
-      commitAction(parsedMessage)
+  const onClickExecute = (message: string) => {
+    if (matchCheckoutNewAction(message)) {
+      checkoutNewBranchAction(parseCheckoutNewAction(message))
+    } else if (matchCheckoutAction(message)) {
+      checkoutAction(parseCheckoutAction(message))
+    } else if (matchCommitPattern(message)) {
+      myCommitAction(parseCommitInput(message))
     } else {
       toast({
         title: 'コマンドが不正です',
@@ -143,248 +156,6 @@ export const Home: React.FC<Props> = ({ }) => {
       })
       return
     }
-  }
-
-  const commitAction = (parsedMessage: string) => {
-    // 空文字の場合は処理終了
-    if (!parsedMessage.length) {
-      return
-    }
-
-    let lastNode: Node | undefined = latestNode
-    let x = defaultX
-    let y = defaultY + nodeId * 100
-    if (lastNode) {
-      const branchIndex = currentBranch.no - 1
-      x = branchIndex * (lastNode.width ?? 0) + branchIndex * 25
-      y = lastNode.position.y + 100
-    }
-
-    const id = `${++nodeId}`
-    const newNode = createNode({
-      id,
-      x,
-      y,
-      label: parsedMessage,
-      branchId: currentBranch.branchName,
-      style: { backgroundColor: 'aqua' },
-    })
-
-    const rfiNodes = reactFlowInstance.getNodes()
-    const foundPreviousLatestNode = rfiNodes.find(
-      (node) => node.id == latestNode.id
-    )
-    if (foundPreviousLatestNode) {
-      foundPreviousLatestNode.style = {
-        backgroundColor: 'white',
-      }
-    }
-    reactFlowInstance.setNodes(rfiNodes)
-
-    reactFlowInstance.addNodes(newNode)
-    if (lastNode) {
-      myConnectEdge(lastNode, newNode)
-    }
-    // 現在のブランチから初めてのコミットの場合は、ブランチノードから線を伸ばす
-    const lastNodeOfCurrentBranch = [...rfiNodes].find(
-      (e) => e.data?.branchId == currentBranch.branchName
-    )
-    const currentBranchNode = [...rfiNodes, newNode].find(
-      (e) => e.id == currentBranch.branchName
-    )
-    if (!lastNodeOfCurrentBranch && currentBranchNode) {
-      myConnectEdge(currentBranchNode, newNode)
-    }
-    reactFlowInstance.fitView({
-      minZoom: 0.1,
-      nodes: reactFlowInstance.getNodes(),
-    })
-
-    setLatestNode(newNode)
-    setCurrentBranch((prev) => {
-      prev.currentNodeId = newNode.id
-      prev.latestNodeId = newNode.id
-      return prev
-    })
-
-    toast({
-      title: 'ノードを追加しました。',
-      description: `x: ${x}`,
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
-    })
-    toast({
-      title: 'ブランチ情報を更新しました。',
-      description: `currentBranch: ${JSON.stringify(currentBranch, null, 2)}`,
-      status: 'success',
-      isClosable: true,
-    })
-  }
-
-  const checkoutAction = (branchName: string) => {
-    if (!branchName.length) {
-      toast({
-        title: 'ブランチ名が空です',
-        status: 'error',
-        isClosable: true,
-      })
-      return
-    }
-
-    const foundBranch = branches.find(
-      (branch) => branch.branchName == branchName
-    )
-    if (!foundBranch) {
-      toast({
-        title: '該当するブランチが存在しません',
-        description: `branchName: ${branchName}`,
-        status: 'error',
-        isClosable: true,
-      })
-      return
-    }
-
-    // 対象のnodeの色を替える
-
-    setCurrentBranch(foundBranch)
-    const rfiNodes = reactFlowInstance.getNodes()
-    const foundPreviousLatestNode = rfiNodes.find(
-      (node) => node.id == latestNode.id
-    )
-    if (foundPreviousLatestNode) {
-      foundPreviousLatestNode.style = {
-        backgroundColor: 'white',
-      }
-    }
-    const foundNextLatestNode = rfiNodes.find(
-      (node) => node.id == foundBranch.currentNodeId
-    )
-    if (foundNextLatestNode) {
-      foundNextLatestNode.style = {
-        backgroundColor: 'aqua',
-      }
-      setLatestNode(foundNextLatestNode)
-    }
-    const branchNodes = rfiNodes.filter((e) =>
-      branches.some((branch) => branch.branchName == e.id)
-    )
-    branchNodes.forEach((branchNode) => {
-      if (branchNode.id == branchName) {
-        branchNode.style = {
-          ...branchNode.style,
-          backgroundColor: 'aqua',
-        }
-      } else {
-        branchNode.style = {
-          ...branchNode.style,
-          backgroundColor: 'white',
-        }
-      }
-    })
-
-    reactFlowInstance.setNodes(rfiNodes)
-
-    toast({
-      title: 'ブランチをcheckoutしました',
-      description: `ブランチ名: ${branchName}, latestNode: ${foundNextLatestNode?.id}`,
-      status: 'success',
-      isClosable: true,
-    })
-  }
-
-  const checkoutNewBranchAction = (branchName: string) => {
-    // 空文字の場合は処理終了
-    if (!branchName.length) {
-      toast({
-        title: 'ブランチ名が空です',
-        status: 'error',
-        isClosable: true,
-      })
-      return
-    }
-
-    const foundBranch = branches.find(
-      (branch) => branch.branchName == branchName
-    )
-    if (foundBranch) {
-      toast({
-        title: '同名のブランチが存在しています',
-        description: `branchName: ${branchName}`,
-        status: 'error',
-        isClosable: true,
-      })
-      return
-    }
-
-    // 新しいブランチの場合は右側にnodeを作成する処理を実装
-    let lastNode: Partial<Node> = latestNode
-    if (!lastNode) {
-      toast({
-        title: 'コミット情報が取得できませんでした',
-        status: 'error',
-        isClosable: true,
-      })
-      return
-    }
-
-    const branchLengthWithoutNewBranch = branches.length
-
-    // ここで横にずらす
-    const newBranch: Branch = {
-      branchName: branchName,
-      no: branches.length + 1,
-      rootNodeId: latestNode.id,
-      currentNodeId: latestNode.id,
-      latestNodeId: latestNode.id,
-    }
-
-    setBranches((prev) => {
-      prev.push(newBranch)
-      return prev
-    })
-
-    setCurrentBranch(newBranch)
-
-    // ここでbranchのnodeを作成する。
-    const position = {
-      x:
-        branchLengthWithoutNewBranch * NODE_WIDTH +
-        BRANCH_UNIT_LEFT_MARGIN +
-        branchLengthWithoutNewBranch * SEPARATE_UNIT_X,
-      y: BRANCH_Y,
-    }
-    const newBranchNode = createBranchNode(
-      newBranch.branchName,
-      position,
-      branchName
-    )
-    newBranchNode.style = {
-      ...newBranchNode.style,
-      backgroundColor: 'aqua',
-    }
-    reactFlowInstance.addNodes(newBranchNode)
-
-    // ブランチの色を変える
-    const rfiNodes = reactFlowInstance.getNodes()
-    const foundBranchNodes = rfiNodes.filter((node) =>
-      branches.some((b) => b.branchName == node.id)
-    )
-    foundBranchNodes.forEach((branch) => {
-      branch.style = {
-        ...branch.style,
-        backgroundColor: 'white',
-      }
-    })
-    reactFlowInstance.setNodes(rfiNodes)
-    reactFlowInstance.addNodes(newBranchNode)
-
-    toast({
-      title: 'ブランチをcheckoutしました',
-      description: `新しいブランチ名: ${branchName}`,
-      status: 'success',
-      isClosable: true,
-    })
   }
 
   return (
