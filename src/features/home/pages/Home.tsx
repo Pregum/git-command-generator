@@ -19,6 +19,9 @@ import { useCustomKeybinding as useCustomKeybinding } from '@/components/layouts
 import { CSSProperties, useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 import * as crypto from 'crypto'
+import { Revision } from '../types/revision'
+import { Branch } from '../types/branch'
+import useConnectEdge from '../hooks/useConnectEdge'
 
 const NODE_WIDTH = 150
 const BRANCH_Y = -100
@@ -28,13 +31,6 @@ const SEPARATE_UNIT_X = 25
 
 export type Props = React.PropsWithChildren<{}>
 
-type Branch = {
-  branchName: string
-  no: number
-  rootNodeId: string
-  currentNodeId: string
-  latestNodeId: string
-}
 
 let nodeId = 0
 
@@ -76,12 +72,6 @@ function sha1(rawInput?: string): string {
 }
 
 const MAIN_BRANCH_ID = 'main'
-
-type Revision = {
-  label: string
-  branchId?: string
-  hash: string
-}
 
 const initialNodes: Node<Revision>[] = [
   createBranchNode(
@@ -134,6 +124,8 @@ export const Home: React.FC<Props> = ({ children }) => {
   )
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+  const { connectEdge: myConnectEdge  } = useConnectEdge()
+
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -251,7 +243,7 @@ export const Home: React.FC<Props> = ({ children }) => {
 
     reactFlowInstance.addNodes(newNode)
     if (lastNode) {
-      connectEdge(lastNode, newNode)
+      myConnectEdge(lastNode, newNode)
     }
     // 現在のブランチから初めてのコミットの場合は、ブランチノードから線を伸ばす
     const lastNodeOfCurrentBranch = [...rfiNodes].find(
@@ -261,7 +253,7 @@ export const Home: React.FC<Props> = ({ children }) => {
       (e) => e.id == currentBranch.branchName
     )
     if (!lastNodeOfCurrentBranch && currentBranchNode) {
-      connectEdge(currentBranchNode, newNode)
+      myConnectEdge(currentBranchNode, newNode)
     }
     reactFlowInstance.fitView({
       minZoom: 0.1,
