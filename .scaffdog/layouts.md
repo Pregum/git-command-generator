@@ -12,7 +12,7 @@ questions:
 # `{{ inputs.name | camel }}/index.ts`
 
 ```typescript
-export * from './{{ inputs.name }}';
+export * from './{{ inputs.name | pascal }}';
 ```
 
 # `{{ inputs.name | camel }}/{{ inputs.name | pascal }}.tsx`
@@ -28,7 +28,7 @@ export const {{ inputs.name | pascal }}: React.FC<Props> = ({ children }) => {
 # `{{ !inputs.story && '!' }}{{ inputs.name | camel }}/{{ inputs.name | pascal }}.stories.tsx`
 
 ```typescript
-import { {{ inputs.name | pascal }} } from './{{ inputs.name | camel }}';
+import { {{ inputs.name | pascal }} } from './{{ inputs.name | pascal }}';
 
 export default { component: {{ inputs.name | pascal }} };
 export const Overview = { args: {} };
