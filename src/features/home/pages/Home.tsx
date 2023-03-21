@@ -10,19 +10,16 @@ import {
   addEdge,
   EdgeChange,
   NodeChange,
-  NodePositionChange,
 } from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/features/home/components/DiagramCanvasDrawArea'
-import { CSSProperties, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
-import * as crypto from 'crypto'
-import { Revision } from '../types/revision'
 import { Branch } from '../types/branch'
 import useConnectEdge from '../hooks/useConnectEdge'
 import createBranchNode from '../utils/createBranchNode'
 import { BranchNode } from '../types/branchNode'
-import sha1 from '../utils/sha1'
 import useMyNode from '../hooks/useMyNode'
+import isNodePositionChange from '../utils/isNodePositionChange'
 
 const NODE_WIDTH = 150
 const BRANCH_Y = -100
@@ -74,11 +71,7 @@ const initialEdges: Edge[] = [
   { id: 'e1-2', source: 'i1', target: 'i2' },
 ]
 
-function isNodePositionChange(arg: any): arg is NodePositionChange {
-  return arg.position !== undefined
-}
-
-export const Home: React.FC<Props> = ({ children }) => {
+export const Home: React.FC<Props> = ({ }) => {
   const [message, setMessage] = useState<string>('')
   const [currentBranch, setCurrentBranch] = useState<Branch>(initialBranches[0])
   const [branches, setBranches] = useState<Branch[]>(initialBranches)
