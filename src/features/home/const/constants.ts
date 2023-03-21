@@ -26,7 +26,7 @@ export const initialNodes: Node<BranchNode>[] = [
     label: 'first commit',
     branchId: MAIN_BRANCH_ID,
     width: NODE_WIDTH,
-    height: NODE_HEIGHT
+    height: NODE_HEIGHT,
   }),
   createNode({
     id: 'i2',
@@ -35,6 +35,7 @@ export const initialNodes: Node<BranchNode>[] = [
     label: 'second commit',
     branchId: MAIN_BRANCH_ID,
     width: NODE_WIDTH,
+    height: NODE_HEIGHT,
     style: {
       backgroundColor: 'aqua',
     },

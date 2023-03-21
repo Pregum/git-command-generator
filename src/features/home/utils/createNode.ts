@@ -2,6 +2,7 @@ import { CSSProperties } from 'react'
 import { Revision } from '../types/revision'
 import sha1 from './sha1'
 import { Node } from 'reactflow'
+import { NODE_HEIGHT, NODE_WIDTH } from '../const/constants'
 
 export default function createNode({
   id,
@@ -27,6 +28,11 @@ export default function createNode({
   merge2Id?: string
 }) {
   const hashStr = sha1()
+  const defaultStyle: CSSProperties = {
+    backgroundColor: 'white',
+    width: NODE_WIDTH,
+    height: NODE_HEIGHT,
+  }
 
   const newNode: Node<Revision, string | undefined> = {
     id: id,
@@ -34,6 +40,7 @@ export default function createNode({
       x: x,
       y: y,
     },
+    type: 'revisionNode',
     data: {
       label: label,
       branchId,
@@ -41,7 +48,7 @@ export default function createNode({
       merge1Id,
       merge2Id,
     },
-    style: { ...style, width, height },
+    style: { ...defaultStyle, ...style, width, height },
   }
 
   return newNode
