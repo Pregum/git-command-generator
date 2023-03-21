@@ -2,13 +2,15 @@ import { Edge, Node } from 'reactflow'
 import { BranchNode } from '../types/branchNode'
 import createBranchNode from '../utils/createBranchNode'
 import { Branch } from '../types/branch'
+import createNode from '../utils/createNode'
 
 export const NODE_WIDTH = 150
+export const NODE_HEIGHT = 75
 export const BRANCH_Y = -100
 export const BRANCH_WIDTH = 60
 export const BRANCH_UNIT_LEFT_MARGIN = (NODE_WIDTH - BRANCH_WIDTH) / 2
 export const SEPARATE_UNIT_X = 25
-export const SEPARATE_UNIT_Y = 100
+export const SEPARATE_UNIT_Y = 150
 export const MAIN_BRANCH_ID = 'main'
 
 export const initialNodes: Node<BranchNode>[] = [
@@ -17,21 +19,26 @@ export const initialNodes: Node<BranchNode>[] = [
     { x: BRANCH_UNIT_LEFT_MARGIN, y: BRANCH_Y },
     'main'
   ),
-  {
+  createNode({
     id: 'i1',
-    position: { x: 0, y: 0 },
-    data: { label: 'first commit', branchId: MAIN_BRANCH_ID },
+    x: 0,
+    y: 0,
+    label: 'first commit',
+    branchId: MAIN_BRANCH_ID,
     width: NODE_WIDTH,
-  },
-  {
+    height: NODE_HEIGHT
+  }),
+  createNode({
     id: 'i2',
-    position: { x: 0, y: SEPARATE_UNIT_Y },
-    data: { label: 'second commit', branchId: MAIN_BRANCH_ID },
+    x: 0,
+    y: SEPARATE_UNIT_Y,
+    label: 'second commit',
+    branchId: MAIN_BRANCH_ID,
     width: NODE_WIDTH,
     style: {
       backgroundColor: 'aqua',
     },
-  },
+  }),
 ]
 
 export const initialBranches: Branch[] = [

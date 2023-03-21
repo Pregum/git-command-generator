@@ -1,11 +1,12 @@
 import { useAtom } from 'jotai'
 import { CSSProperties } from 'react'
-import { nodeIdAtom, nodeWidthAtom } from '../stores/atom'
+import { nodeHeightAtom, nodeIdAtom, nodeWidthAtom } from '../stores/atom'
 import utilCreateNode from '../utils/createNode'
 
 export default function useMyNode() {
   const [nodeId, setNodeId] = useAtom(nodeIdAtom)
   const [nodeWidth] = useAtom(nodeWidthAtom)
+  const [nodeHeight] = useAtom(nodeHeightAtom)
 
   const createNode = ({
     id,
@@ -15,6 +16,7 @@ export default function useMyNode() {
     style,
     branchId,
     width,
+    height,
     merge1Id,
     merge2Id,
   }: {
@@ -25,6 +27,7 @@ export default function useMyNode() {
     branchId?: string
     style?: CSSProperties
     width?: number
+    height?: number
     merge1Id?: string
     merge2Id?: string
   }) => {
@@ -36,6 +39,7 @@ export default function useMyNode() {
     }
 
     const validatedWidth = width ? width : nodeWidth
+    const validatedHeight = height ? height : nodeHeight
 
     return utilCreateNode({
       id: newNodeIdStr,
@@ -45,6 +49,7 @@ export default function useMyNode() {
       style,
       branchId,
       width: validatedWidth,
+      height: validatedHeight,
       merge1Id,
       merge2Id,
     })

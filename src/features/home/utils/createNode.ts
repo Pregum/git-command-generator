@@ -11,6 +11,7 @@ export default function createNode({
   style,
   branchId,
   width,
+  height,
   merge1Id,
   merge2Id,
 }: {
@@ -21,6 +22,7 @@ export default function createNode({
   branchId?: string
   style?: CSSProperties
   width: number
+  height?: number
   merge1Id?: string
   merge2Id?: string
 }) {
@@ -39,8 +41,7 @@ export default function createNode({
       merge1Id,
       merge2Id,
     },
-    width,
-    style,
+    style: { ...style, width, height },
   }
 
   return newNode

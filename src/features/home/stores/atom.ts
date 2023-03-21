@@ -4,6 +4,7 @@ import {
   BRANCH_Y,
   initialBranches,
   initialNodes,
+  NODE_HEIGHT,
   NODE_WIDTH,
   SEPARATE_UNIT_X,
   SEPARATE_UNIT_Y,
@@ -12,6 +13,7 @@ import { Branch } from '../types/branch'
 import { Node } from 'reactflow'
 
 export const nodeWidthAtom = atom((_) => NODE_WIDTH)
+export const nodeHeightAtom = atom(() => NODE_HEIGHT)
 export const branchYAtom = atom((_) => BRANCH_Y)
 export const branchWidthAtom = atom((_) => BRANCH_WIDTH)
 export const branchUnitLeftMarginAtom = atom(
