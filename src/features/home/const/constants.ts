@@ -3,6 +3,7 @@ import createBranchNode from '../utils/createBranchNode'
 import { Branch } from '../types/branch'
 import createNode from '../utils/createNode'
 import { Revision } from '../types/revision'
+import sha1 from '../utils/sha1'
 
 export const NODE_WIDTH = 150
 export const NODE_HEIGHT = 75
@@ -13,6 +14,7 @@ export const SEPARATE_UNIT_X = 25
 export const SEPARATE_UNIT_Y = 150
 export const MAIN_BRANCH_ID = 'main'
 
+const i1Hash = sha1()
 export const initialNodes: Node<Revision>[] = [
   createBranchNode(
     MAIN_BRANCH_ID,
@@ -26,6 +28,7 @@ export const initialNodes: Node<Revision>[] = [
     label: 'first commit',
     branchId: MAIN_BRANCH_ID,
     parentId: '',
+    parentHash: '',
     width: NODE_WIDTH,
     height: NODE_HEIGHT,
   }),
@@ -36,6 +39,7 @@ export const initialNodes: Node<Revision>[] = [
     label: 'second commit',
     branchId: MAIN_BRANCH_ID,
     parentId: 'i1',
+    parentHash: i1Hash,
     width: NODE_WIDTH,
     style: {
       backgroundColor: 'aqua',

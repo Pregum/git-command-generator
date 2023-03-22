@@ -2,7 +2,12 @@ import { useToast } from '@chakra-ui/react'
 import { useAtom } from 'jotai'
 import { Dispatch, SetStateAction } from 'react'
 import { useReactFlow, Node } from 'reactflow'
-import { defaultXAtom, defaultYAtom, nodeIdAtom, separateUnitYAtom } from '../stores/atom'
+import {
+  defaultXAtom,
+  defaultYAtom,
+  nodeIdAtom,
+  separateUnitYAtom,
+} from '../stores/atom'
 import { Branch } from '../types/branch'
 import useConnectEdge from './useConnectEdge'
 import useMyNode from './useMyNode'
@@ -26,7 +31,7 @@ export default function useGitCommitAction({
   const [nodeId, setNodeId] = useAtom(nodeIdAtom)
   const [defaultY] = useAtom(defaultYAtom)
   const [defaultX] = useAtom(defaultXAtom)
-  const [ separateUnitY ] = useAtom(separateUnitYAtom)
+  const [separateUnitY] = useAtom(separateUnitYAtom)
   const { connectEdge: myConnectEdge } = useConnectEdge()
   const { createNode } = useMyNode()
 
