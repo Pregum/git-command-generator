@@ -2,8 +2,16 @@ import { useToast } from '@chakra-ui/react'
 import { useAtom } from 'jotai'
 import { Dispatch, SetStateAction } from 'react'
 import { useReactFlow, Node } from 'reactflow'
-import { defaultXAtom, defaultYAtom, nodeIdAtom, separateUnitYAtom } from '../stores/atom'
+import {
+  defaultXAtom,
+  defaultYAtom,
+  nodeIdAtom,
+  separateUnitXAtom,
+  separateUnitYAtom,
+} from '../stores/atom'
 import { Branch } from '../types/branch'
+import { Revision } from '../types/revision'
+import { RevisionNode } from '../types/revisionNode'
 import useConnectEdge from './useConnectEdge'
 import useMyNode from './useMyNode'
 
@@ -26,7 +34,8 @@ export default function useGitCommitAction({
   const [nodeId, setNodeId] = useAtom(nodeIdAtom)
   const [defaultY] = useAtom(defaultYAtom)
   const [defaultX] = useAtom(defaultXAtom)
-  const [ separateUnitY ] = useAtom(separateUnitYAtom)
+  const [separateUnitY] = useAtom(separateUnitYAtom)
+  const [separateUnitX] = useAtom(separateUnitXAtom)
   const { connectEdge: myConnectEdge } = useConnectEdge()
   const { createNode } = useMyNode()
 
@@ -36,12 +45,12 @@ export default function useGitCommitAction({
       return
     }
 
-    let lastNode: Node | undefined = latestNode
+    let lastNode: RevisionNode | undefined = latestNode
     let x = defaultX
     let y = defaultY + nodeId * separateUnitY
     if (lastNode) {
       const branchIndex = currentBranch.no - 1
-      x = branchIndex * (lastNode.width ?? 0) + branchIndex * 25
+      x = branchIndex * (lastNode.width ?? 0) + branchIndex * separateUnitX
       y = lastNode.position.y + separateUnitY
     }
 
@@ -54,6 +63,8 @@ export default function useGitCommitAction({
       y,
       label: parsedMessage,
       branchId: currentBranch.branchName,
+      parentId: lastNode.id,
+      parentHash: lastNode.data?.hash ?? '',
       style: { backgroundColor: 'aqua' },
     })
 

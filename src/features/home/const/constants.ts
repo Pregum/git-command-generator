@@ -1,8 +1,9 @@
-import { Edge, Node } from 'reactflow'
-import { BranchNode } from '../types/branchNode'
+import { Edge } from 'reactflow'
 import createBranchNode from '../utils/createBranchNode'
 import { Branch } from '../types/branch'
 import createNode from '../utils/createNode'
+import sha1 from '../utils/sha1'
+import { RevisionNode } from '../types/revisionNode'
 
 export const NODE_WIDTH = 150
 export const NODE_HEIGHT = 75
@@ -13,7 +14,8 @@ export const SEPARATE_UNIT_X = 25
 export const SEPARATE_UNIT_Y = 150
 export const MAIN_BRANCH_ID = 'main'
 
-export const initialNodes: Node<BranchNode>[] = [
+const i1Hash = sha1()
+export const initialNodes: RevisionNode[] = [
   createBranchNode(
     MAIN_BRANCH_ID,
     { x: BRANCH_UNIT_LEFT_MARGIN, y: BRANCH_Y },
@@ -25,6 +27,8 @@ export const initialNodes: Node<BranchNode>[] = [
     y: 0,
     label: 'first commit',
     branchId: MAIN_BRANCH_ID,
+    parentId: '',
+    parentHash: '',
     width: NODE_WIDTH,
     height: NODE_HEIGHT,
   }),
@@ -34,6 +38,8 @@ export const initialNodes: Node<BranchNode>[] = [
     y: SEPARATE_UNIT_Y,
     label: 'second commit',
     branchId: MAIN_BRANCH_ID,
+    parentId: 'i1',
+    parentHash: i1Hash,
     width: NODE_WIDTH,
     height: NODE_HEIGHT,
     style: {

@@ -129,6 +129,7 @@ export default function useMergeAction() {
       x,
       y,
       branchId: currentBranch.branchName,
+      parentId: latestNode.id,
       merge1Id: latestNode.id,
       merge2Id: anotherLatestNode.id,
     })
