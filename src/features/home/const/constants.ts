@@ -1,5 +1,4 @@
 import { Edge, Node } from 'reactflow'
-import { BranchNode } from '../types/branchNode'
 import createBranchNode from '../utils/createBranchNode'
 import { Branch } from '../types/branch'
 import createNode from '../utils/createNode'
