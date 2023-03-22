@@ -47,6 +47,8 @@ export default function createNode({
       merge1Id,
       merge2Id,
     },
+    width,
+    height,
     style: { ...style, width, height },
   }
 

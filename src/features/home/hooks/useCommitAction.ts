@@ -6,6 +6,7 @@ import {
   defaultXAtom,
   defaultYAtom,
   nodeIdAtom,
+  separateUnitXAtom,
   separateUnitYAtom,
 } from '../stores/atom'
 import { Branch } from '../types/branch'
@@ -34,6 +35,7 @@ export default function useGitCommitAction({
   const [defaultY] = useAtom(defaultYAtom)
   const [defaultX] = useAtom(defaultXAtom)
   const [separateUnitY] = useAtom(separateUnitYAtom)
+  const [separateUnitX] = useAtom(separateUnitXAtom)
   const { connectEdge: myConnectEdge } = useConnectEdge()
   const { createNode } = useMyNode()
 
@@ -48,7 +50,7 @@ export default function useGitCommitAction({
     let y = defaultY + nodeId * separateUnitY
     if (lastNode) {
       const branchIndex = currentBranch.no - 1
-      x = branchIndex * (lastNode.width ?? 0) + branchIndex * 25
+      x = branchIndex * (lastNode.width ?? 0) + branchIndex * separateUnitX
       y = lastNode.position.y + separateUnitY
     }
 
@@ -62,6 +64,7 @@ export default function useGitCommitAction({
       label: parsedMessage,
       branchId: currentBranch.branchName,
       parentId: lastNode.id,
+      parentHash: lastNode.data?.hash ?? '',
       style: { backgroundColor: 'aqua' },
     })
 

@@ -30,7 +30,6 @@ export const initialNodes: RevisionNode[] = [
     parentId: '',
     parentHash: '',
     width: NODE_WIDTH,
-    height: NODE_HEIGHT,
   }),
   createNode({
     id: 'i2',
