@@ -15,6 +15,7 @@ export default function createBranchNode(
     data: {
       label,
       hash: hashStr,
+      parentId: '',
     },
     style: {
       borderRadius: '50%',

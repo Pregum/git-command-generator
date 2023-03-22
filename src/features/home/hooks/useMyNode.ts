@@ -17,6 +17,7 @@ export default function useMyNode() {
     branchId,
     width,
     height,
+    parentId,
     merge1Id,
     merge2Id,
   }: {
@@ -28,6 +29,7 @@ export default function useMyNode() {
     style?: CSSProperties
     width?: number
     height?: number
+    parentId: string
     merge1Id?: string
     merge2Id?: string
   }) => {
@@ -48,6 +50,7 @@ export default function useMyNode() {
       label,
       style,
       branchId,
+      parentId,
       width: validatedWidth,
       height: validatedHeight,
       merge1Id,

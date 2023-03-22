@@ -54,6 +54,7 @@ export default function useGitCommitAction({
       y,
       label: parsedMessage,
       branchId: currentBranch.branchName,
+      parentId: lastNode.id,
       style: { backgroundColor: 'aqua' },
     })
 
