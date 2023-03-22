@@ -1,14 +1,13 @@
-import { useAtom } from 'jotai'
-import { Revision } from '../types/revision'
-import { Edge, Node, useReactFlow } from 'reactflow'
+import { Edge, useReactFlow } from 'reactflow'
 import utilConnectEdge from '../utils/connectEdge'
 import { useToast } from '@chakra-ui/react'
+import { RevisionNode } from '../types/revisionNode'
 
 export default function useConnectEdge() {
   const toast = useToast()
   const reactFlowInstance = useReactFlow()
 
-  const connectEdge = (fromNode: Node<Revision>, toNode: Node<Revision>) => {
+  const connectEdge = (fromNode: RevisionNode, toNode: RevisionNode) => {
     utilConnectEdge(
       fromNode,
       toNode,

@@ -1,8 +1,9 @@
 import { Edge, ReactFlowInstance, Node } from 'reactflow'
 import { Revision } from '../types/revision'
+import { RevisionNode } from '../types/revisionNode'
 
 export default function connectEdge(
-  fromNode: Node<Revision>,
+  fromNode: RevisionNode,
   toNode: Node,
   onSuccess?: (edge: Edge) => void,
   onFailed?: () => void
