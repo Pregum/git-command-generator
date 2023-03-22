@@ -1,5 +1,5 @@
-import { Position, Node } from 'reactflow'
-import { Revision } from '../types/revision'
+import { Position } from 'reactflow'
+import { RevisionNode } from '../types/revisionNode'
 import sha1 from './sha1'
 
 export default function createBranchNode(
@@ -7,7 +7,7 @@ export default function createBranchNode(
   position: { x: number; y: number },
   label: string,
   hash?: string
-): Node<Revision> {
+): RevisionNode {
   const hashStr = hash ? hash : sha1()
   const node = {
     id,
