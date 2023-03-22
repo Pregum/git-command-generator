@@ -20,7 +20,7 @@ import ReactFlow, {
 } from 'reactflow'
 
 import 'reactflow/dist/style.css'
-import { RevisionNode } from '../RevisionNode/RevisionNode'
+import { CommitNode } from '../RevisionNode/RevisionNode'
 
 export const DiagramCanvasDrawArea: React.FC<Props> = ({
   nodes,
@@ -29,7 +29,7 @@ export const DiagramCanvasDrawArea: React.FC<Props> = ({
   onEdgesChange,
   onNodesChange,
 }) => {
-  const nodeTypes = useMemo(() => ({ revisionNode: RevisionNode }), [])
+  const nodeTypes = useMemo(() => ({ revisionNode: CommitNode }), [])
 
   return (
     <div style={{ width: '100%', height: '100%' }}>

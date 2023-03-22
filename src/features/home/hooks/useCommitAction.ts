@@ -10,7 +10,6 @@ import {
   separateUnitYAtom,
 } from '../stores/atom'
 import { Branch } from '../types/branch'
-import { Revision } from '../types/revision'
 import { RevisionNode } from '../types/revisionNode'
 import useConnectEdge from './useConnectEdge'
 import useMyNode from './useMyNode'
@@ -74,6 +73,7 @@ export default function useGitCommitAction({
     )
     if (foundPreviousLatestNode) {
       foundPreviousLatestNode.style = {
+        ...foundPreviousLatestNode.style,
         backgroundColor: 'white',
       }
     }

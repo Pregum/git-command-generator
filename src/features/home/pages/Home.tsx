@@ -25,7 +25,7 @@ import { branchesAtom, currentBranchAtom, latestNodeAtom } from '../stores/atom'
 import { useAtom } from 'jotai'
 import { initialEdges, initialNodes } from '../const/constants'
 import useMergeAction from '../hooks/useMergeAction'
-import { RevisionNode } from '../components/RevisionNode/RevisionNode'
+import { CommitNode } from '../components/RevisionNode/RevisionNode'
 
 export type Props = React.PropsWithChildren<{}>
 
