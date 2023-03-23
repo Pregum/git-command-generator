@@ -135,7 +135,6 @@ export default function useCheckoutAction({
     })
     const foundRevisionNode = revisionNodes.find((node) => {
       const rNode = node as RevisionNode
-      console.log('rNode.data?.hash: ', rNode.data?.hash ?? '')
       return (rNode.data?.hash ?? '').startsWith(hash)
     })
     return foundRevisionNode
