@@ -95,7 +95,7 @@ export default function useCheckoutAction({
       branches.some((branch) => branch.branchName == e.id)
     )
     branchNodes.forEach((branchNode) => {
-      if (branchNode.id == branchNameOrHash) {
+      if (branchNode.id == foundBranch?.branchName) {
         branchNode.style = {
           ...branchNode.style,
           backgroundColor: 'aqua',
