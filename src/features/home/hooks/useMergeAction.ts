@@ -11,6 +11,7 @@ import {
   separateUnitXAtom,
   separateUnitYAtom,
 } from '../stores/atom'
+import sha1 from '../utils/sha1'
 import useConnectEdge from './useConnectEdge'
 import useMyNode from './useMyNode'
 
@@ -123,6 +124,7 @@ export default function useMergeAction() {
       y = maximumY
     }
 
+    const parentHash = sha1(latestNode.id)
     const mergedNode = createNode({
       id: newId.toFixed(),
       label: sentence,
@@ -130,6 +132,7 @@ export default function useMergeAction() {
       y,
       branchId: currentBranch.branchName,
       parentId: latestNode.id,
+      parentHash,
       merge1Id: latestNode.id,
       merge2Id: anotherLatestNode.id,
     })
