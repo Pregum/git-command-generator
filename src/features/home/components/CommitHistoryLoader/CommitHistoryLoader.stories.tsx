@@ -1,4 +1,4 @@
-import { CommitHistoryLoader } from './CommitHistoryLoader';
+import { CommitHistoryLoader } from './CommitHistoryLoader'
 
-export default { component: CommitHistoryLoader };
-export const Overview = { args: {} };
+export default { component: CommitHistoryLoader }
+export const Overview = { args: {} }

@@ -10,7 +10,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Text,
 } from '@chakra-ui/react'
 
 type CommandExplanation = {
