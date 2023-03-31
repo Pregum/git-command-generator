@@ -12,7 +12,7 @@ import {
   NodeChange,
 } from 'reactflow'
 import { DiagramCanvasDrawArea } from '@/features/home/components/DiagramCanvasDrawArea'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { Branch } from '../types/branch'
 import createBranchNode from '../utils/createBranchNode'
@@ -25,6 +25,7 @@ import { branchesAtom, currentBranchAtom, latestNodeAtom } from '../stores/atom'
 import { useAtom } from 'jotai'
 import { initialEdges, initialNodes } from '../const/constants'
 import useMergeAction from '../hooks/useMergeAction'
+import { CommitNode } from '../components/RevisionNode/RevisionNode'
 
 export type Props = React.PropsWithChildren<{}>
 

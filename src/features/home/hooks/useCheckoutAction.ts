@@ -2,6 +2,7 @@ import { useToast } from '@chakra-ui/react'
 import { Dispatch, SetStateAction } from 'react'
 import { useReactFlow, Node } from 'reactflow'
 import { Branch } from '../types/branch'
+import { RevisionNode } from '../types/revisionNode'
 
 export type CheckoutActionProps = {
   branches: Branch[]
@@ -19,8 +20,8 @@ export default function useCheckoutAction({
   const toast = useToast()
   const reactFlowInstance = useReactFlow()
 
-  const checkoutAction = (branchName: string) => {
-    if (!branchName.length) {
+  const checkoutAction = (branchNameOrHash: string) => {
+    if (!branchNameOrHash.length) {
       toast({
         title: 'ブランチ名が空です',
         status: 'error',
@@ -29,17 +30,37 @@ export default function useCheckoutAction({
       return
     }
 
-    const foundBranch = branches.find(
-      (branch) => branch.branchName == branchName
+    let foundBranch = branches.find(
+      (branch) => branch.branchName == branchNameOrHash
     )
+
+    let foundTargetNode: Node | undefined = undefined
     if (!foundBranch) {
-      toast({
-        title: '該当するブランチが存在しません',
-        description: `branchName: ${branchName}`,
-        status: 'error',
-        isClosable: true,
-      })
-      return
+      // ここでhash値の検索を行う。
+      foundTargetNode = searchHashNode(branchNameOrHash)
+      if (!foundTargetNode) {
+        toast({
+          title: '該当するリビジョンが存在しません',
+          description: `hash: ${branchNameOrHash}`,
+          status: 'error',
+          isClosable: true,
+        })
+        return
+      }
+
+      // 見つかった場合はbranchIdからbranch名を取得する
+      foundBranch = branches.find(
+        (branch) => branch.branchName == foundTargetNode!.data.branchId
+      )
+      if (!foundBranch) {
+        toast({
+          title: '該当するブランチが存在しません',
+          description: `branchName: ${branchNameOrHash}`,
+          status: 'error',
+          isClosable: true,
+        })
+        return
+      }
     }
 
     // 対象のnodeの色を替える
@@ -51,14 +72,21 @@ export default function useCheckoutAction({
     )
     if (foundPreviousLatestNode) {
       foundPreviousLatestNode.style = {
+        ...foundPreviousLatestNode.style,
         backgroundColor: 'white',
       }
     }
-    const foundNextLatestNode = rfiNodes.find(
-      (node) => node.id == foundBranch.currentNodeId
+    let foundNextLatestNode = rfiNodes.find(
+      (node) => node.id == foundBranch!.currentNodeId
     )
+    if (foundTargetNode) {
+      foundNextLatestNode = rfiNodes.find(
+        (node) => node.id == foundTargetNode!.id
+      )
+    }
     if (foundNextLatestNode) {
       foundNextLatestNode.style = {
+        ...foundNextLatestNode.style,
         backgroundColor: 'aqua',
       }
       setLatestNode(foundNextLatestNode)
@@ -67,7 +95,7 @@ export default function useCheckoutAction({
       branches.some((branch) => branch.branchName == e.id)
     )
     branchNodes.forEach((branchNode) => {
-      if (branchNode.id == branchName) {
+      if (branchNode.id == foundBranch?.branchName) {
         branchNode.style = {
           ...branchNode.style,
           backgroundColor: 'aqua',
@@ -84,7 +112,7 @@ export default function useCheckoutAction({
 
     toast({
       title: 'ブランチをcheckoutしました',
-      description: `ブランチ名: ${branchName}, latestNode: ${foundNextLatestNode?.id}`,
+      description: `ブランチ名: ${branchNameOrHash}, latestNode: ${foundNextLatestNode?.id}`,
       status: 'success',
       isClosable: true,
     })
@@ -98,6 +126,22 @@ export default function useCheckoutAction({
     const branchName = inputStr.match(checkoutRegex)?.groups?.branchName ?? ''
 
     return branchName
+  }
+
+  const searchHashNode = (hash: string) => {
+    const rfiNodes = reactFlowInstance.getNodes()
+    const revisionNodes = rfiNodes.filter((node) => {
+      return isRevisionNode(node)
+    })
+    const foundRevisionNode = revisionNodes.find((node) => {
+      const rNode = node as RevisionNode
+      return (rNode.data?.hash ?? '').startsWith(hash)
+    })
+    return foundRevisionNode
+  }
+
+  const isRevisionNode = (node: Node): node is RevisionNode => {
+    return node.data?.hash !== undefined
   }
 
   return { checkoutAction, matchCheckoutAction, parseCheckoutAction }
