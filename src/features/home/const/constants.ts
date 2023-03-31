@@ -30,6 +30,7 @@ export const initialNodes: RevisionNode[] = [
     parentId: '',
     parentHash: '',
     width: NODE_WIDTH,
+    height: NODE_HEIGHT,
   }),
   createNode({
     id: 'i2',
@@ -40,6 +41,7 @@ export const initialNodes: RevisionNode[] = [
     parentId: 'i1',
     parentHash: i1Hash,
     width: NODE_WIDTH,
+    height: NODE_HEIGHT,
     style: {
       backgroundColor: 'aqua',
     },

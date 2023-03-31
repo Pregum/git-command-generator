@@ -6,7 +6,7 @@ export type Props = React.PropsWithChildren<{
   onEdgesChange: OnEdgesChange
   onNodesChange: OnNodesChange
 }>
-import React from 'react'
+import React, { useMemo } from 'react'
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -20,6 +20,7 @@ import ReactFlow, {
 } from 'reactflow'
 
 import 'reactflow/dist/style.css'
+import { CommitNode } from '../RevisionNode/RevisionNode'
 
 export const DiagramCanvasDrawArea: React.FC<Props> = ({
   nodes,
@@ -28,6 +29,8 @@ export const DiagramCanvasDrawArea: React.FC<Props> = ({
   onEdgesChange,
   onNodesChange,
 }) => {
+  const nodeTypes = useMemo(() => ({ revisionNode: CommitNode }), [])
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
@@ -36,6 +39,7 @@ export const DiagramCanvasDrawArea: React.FC<Props> = ({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
         fitView
       >
         <Controls />

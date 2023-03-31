@@ -3,8 +3,6 @@ import { Box, Flex, Grid, useDisclosure } from '@chakra-ui/react'
 import { CommitHistoryLoader } from '@/features/home/components/CommitHistoryLoader/CommitHistoryLoader'
 import {
   useReactFlow,
-  Node,
-  Edge,
   useNodesState,
   useEdgesState,
   addEdge,
