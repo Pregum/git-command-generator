@@ -11,6 +11,8 @@ import {
   separateUnitXAtom,
   separateUnitYAtom,
 } from '../stores/atom'
+import { setStyle } from '../utils/setStyle'
+import sha1 from '../utils/sha1'
 import useConnectEdge from './useConnectEdge'
 import useMyNode from './useMyNode'
 
@@ -123,6 +125,7 @@ export default function useMergeAction() {
       y = maximumY
     }
 
+    const parentHash = sha1(latestNode.id)
     const mergedNode = createNode({
       id: newId.toFixed(),
       label: sentence,
@@ -130,31 +133,21 @@ export default function useMergeAction() {
       y,
       branchId: currentBranch.branchName,
       parentId: latestNode.id,
+      parentHash,
       merge1Id: latestNode.id,
       merge2Id: anotherLatestNode.id,
     })
 
     const foundLatestNode = rfiNodes.find((node) => node.id == latestNode.id)
     if (foundLatestNode) {
-      foundLatestNode.style = {
-        ...foundLatestNode.style,
-        backgroundColor: 'white',
-      }
+      setStyle(foundLatestNode, { backgroundColor: 'white' })
     }
 
     // ここで色の更新をかける
-    branchNode.style = {
-      ...branchNode.style,
-      backgroundColor: 'white',
-    }
-
+    setStyle(branchNode, { backgroundColor: 'white' })
     reactFlowInstance.setNodes(rfiNodes)
 
-    mergedNode.style = {
-      ...mergedNode.style,
-      backgroundColor: 'aqua',
-    }
-
+    setStyle(mergedNode, { backgroundColor: 'aqua' })
     reactFlowInstance.addNodes(mergedNode)
     setLatestNode(mergedNode)
     setCurrentBranch((prev) => {

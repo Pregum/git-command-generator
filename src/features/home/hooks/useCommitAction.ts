@@ -11,6 +11,7 @@ import {
 } from '../stores/atom'
 import { Branch } from '../types/branch'
 import { RevisionNode } from '../types/revisionNode'
+import { setStyle } from '../utils/setStyle'
 import useConnectEdge from './useConnectEdge'
 import useMyNode from './useMyNode'
 
@@ -72,10 +73,9 @@ export default function useGitCommitAction({
       (node) => node.id == latestNode.id
     )
     if (foundPreviousLatestNode) {
-      foundPreviousLatestNode.style = {
-        ...foundPreviousLatestNode.style,
+      setStyle(foundPreviousLatestNode, {
         backgroundColor: 'white',
-      }
+      })
     }
     reactFlowInstance.setNodes(rfiNodes)
 

@@ -10,6 +10,7 @@ import {
 } from '../stores/atom'
 import { useAtom } from 'jotai'
 import createBranchNode from '../utils/createBranchNode'
+import { setStyle } from '../utils/setStyle'
 
 export type CheckoutNewActionProps = {
   branches: Branch[]
@@ -98,10 +99,7 @@ export default function useCheckoutNewAction({
       position,
       branchName
     )
-    newBranchNode.style = {
-      ...newBranchNode.style,
-      backgroundColor: 'aqua',
-    }
+    setStyle(newBranchNode, { backgroundColor: 'aqua' })
     reactFlowInstance.addNodes(newBranchNode)
 
     // ブランチの色を変える
@@ -110,10 +108,7 @@ export default function useCheckoutNewAction({
       branches.some((b) => b.branchName == node.id)
     )
     foundBranchNodes.forEach((branch) => {
-      branch.style = {
-        ...branch.style,
-        backgroundColor: 'white',
-      }
+      setStyle(branch, { backgroundColor: 'white' })
     })
     reactFlowInstance.setNodes(rfiNodes)
     reactFlowInstance.addNodes(newBranchNode)

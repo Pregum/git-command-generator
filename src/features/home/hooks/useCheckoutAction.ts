@@ -2,6 +2,7 @@ import { useToast } from '@chakra-ui/react'
 import { Dispatch, SetStateAction } from 'react'
 import { useReactFlow, Node } from 'reactflow'
 import { Branch } from '../types/branch'
+import { setStyle } from '../utils/setStyle'
 import { RevisionNode } from '../types/revisionNode'
 
 export type CheckoutActionProps = {
@@ -71,10 +72,9 @@ export default function useCheckoutAction({
       (node) => node.id == latestNode.id
     )
     if (foundPreviousLatestNode) {
-      foundPreviousLatestNode.style = {
-        ...foundPreviousLatestNode.style,
+      setStyle(foundPreviousLatestNode, {
         backgroundColor: 'white',
-      }
+      })
     }
     let foundNextLatestNode = rfiNodes.find(
       (node) => node.id == foundBranch!.currentNodeId
@@ -85,10 +85,9 @@ export default function useCheckoutAction({
       )
     }
     if (foundNextLatestNode) {
-      foundNextLatestNode.style = {
-        ...foundNextLatestNode.style,
+      setStyle(foundNextLatestNode, {
         backgroundColor: 'aqua',
-      }
+      })
       setLatestNode(foundNextLatestNode)
     }
     const branchNodes = rfiNodes.filter((e) =>
@@ -96,15 +95,13 @@ export default function useCheckoutAction({
     )
     branchNodes.forEach((branchNode) => {
       if (branchNode.id == foundBranch?.branchName) {
-        branchNode.style = {
-          ...branchNode.style,
+        setStyle(branchNode, {
           backgroundColor: 'aqua',
-        }
+        })
       } else {
-        branchNode.style = {
-          ...branchNode.style,
+        setStyle(branchNode, {
           backgroundColor: 'white',
-        }
+        })
       }
     })
 
