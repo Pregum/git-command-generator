@@ -22,6 +22,7 @@ import { initialEdges, initialNodes } from '../const/constants'
 import useMergeAction from '../hooks/useMergeAction'
 import { useCustomKeybinding } from '../../../components/layouts/CustomKeybinding/CustomKeybinding'
 import { CommandHelpModal } from '../components/CommandHelpModal'
+import useResetAction from '../hooks/useResetAction'
 
 export type Props = React.PropsWithChildren<{}>
 
@@ -62,6 +63,7 @@ export const Home: React.FC<Props> = ({}) => {
     })
 
   const { mergeAction, matchMergeAction, parseMergeAction } = useMergeAction()
+  const { resetAction, matchResetAction, parseResetAction } = useResetAction({})
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
@@ -113,6 +115,8 @@ export const Home: React.FC<Props> = ({}) => {
       myCommitAction(parseCommitInput(message))
     } else if (matchMergeAction(message)) {
       mergeAction(parseMergeAction(message))
+    } else if (matchResetAction(message)) {
+      resetAction(parseResetAction(message))
     } else {
       toast({
         title: 'コマンドが不正です',

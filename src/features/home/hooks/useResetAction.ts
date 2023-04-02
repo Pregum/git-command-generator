@@ -26,11 +26,11 @@ export default function useResetAction({}: GitCommandActionProps) {
     // 既に他のリビジョンがresetより先に存在する場合はリビジョンを保持する。
     const rfiNodes = reactFlowInstance.getNodes()
     const currentRevision = rfiNodes.find((node) => {
-      node.id == latestNode.id
+      return node.id == latestNode.id
     })
     if (!currentRevision) {
       error({
-        title: '対象のリビジョンが見つかりませんでした。',
+        title: '現在のリビジョンが見つかりませんでした。',
       })
       return
     }
@@ -43,7 +43,7 @@ export default function useResetAction({}: GitCommandActionProps) {
     // 複数ブランチが存在する場合もあるので、最新ブランチのparent_idで再起処理を行う
     const targetId = convertToTargetHash(hashOrHead)
     const targetNode = searchCommitRecursively(
-      (node) => node.id == targetId,
+      (node) => node.data.hash?.startsWith(targetId) ?? false,
       (node) => {
         resetApplyingNodes.push(node)
       },
@@ -65,8 +65,19 @@ export default function useResetAction({}: GitCommandActionProps) {
     })
 
     success({
-      title: '対象のrevisionまでresetしました'
+      title: '対象のrevisionまでresetしました',
+      description: `削除したrevision: ${resetApplyingNodes.map((s) => s.id)}`,
     })
+  }
+
+  const matchResetAction = (inputStr: string) => {
+    return !!parseResetAction(inputStr)
+  }
+
+  const parseResetAction = (inputStr: string) => {
+    const resetRegex = /git\s+reset\s+(?<hash>[\w^@~])/
+    const hashOrHead = inputStr.match(resetRegex)?.groups?.hash ?? ''
+    return hashOrHead
   }
 
   const removeConnectedEdge = (removingNode: Node<Revision>) => {
@@ -107,17 +118,17 @@ export default function useResetAction({}: GitCommandActionProps) {
     //   return currentNode
     // }
     if (predicate(currentNode)) {
-      return undefined
+      return currentNode
     }
 
     cb(currentNode)
 
     const parentNode = reactFlowInstance
       .getNodes()
-      .find((node) => (node.data?.parentId ?? '') == currentNode.data.parentId)
+      .find((node) => (node.id ?? '') == currentNode.data.parentId)
 
     return searchCommitRecursively(predicate, cb, parentNode)
   }
 
-  return { resetAction }
+  return { resetAction, matchResetAction, parseResetAction }
 }
