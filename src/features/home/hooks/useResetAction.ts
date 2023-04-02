@@ -57,16 +57,20 @@ export default function useResetAction({}: GitCommandActionProps) {
       return
     }
 
-    setLatestNode(targetNode)
-    setStyle(targetNode, {
-      backgroundColor: 'aqua',
-    })
-
     // 見つかったので、先頭から消していく
     const newNodes = filterRemovingNode(resetApplyingNodes)
     reactFlowInstance.setNodes(newNodes)
     const newEdges = filterConnectedEdge(resetApplyingNodes)
     reactFlowInstance.setEdges(newEdges)
+
+    const newLatestNode = newNodes.find((node) => node.id == targetNode.id)
+
+    if (newLatestNode) {
+      setLatestNode(newLatestNode)
+      setStyle(newLatestNode, {
+        backgroundColor: 'aqua',
+      })
+    }
 
     success({
       title: '対象のrevisionまでresetしました',
@@ -88,7 +92,7 @@ export default function useResetAction({}: GitCommandActionProps) {
     const rfiEdges = reactFlowInstance.getEdges()
     const nextStateEdges = rfiEdges.filter(
       (edge) =>
-        !removingNodes.some((s) => edge.source == s.id || edge.target == s.id)
+        !removingNodes.some((s) => edge.source === s.id || edge.target === s.id)
     )
 
     console.log(
