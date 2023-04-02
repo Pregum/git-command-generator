@@ -5,11 +5,12 @@ import { latestNodeAtom } from '../stores/atom'
 import { Revision } from '../types/revision'
 import useMyToast from './useMyToast'
 import { Node } from 'reactflow'
+import { setStyle } from '../utils/setStyle'
 
 export type GitCommandActionProps = {}
 
 export default function useResetAction({}: GitCommandActionProps) {
-  const reactFlowInstance = useReactFlow()
+  const reactFlowInstance = useReactFlow<Revision, any>()
   // const toast= useToast()
   const { error, success } = useMyToast()
   const [latestNode, setLatestNode] = useAtom(latestNodeAtom)
@@ -56,13 +57,16 @@ export default function useResetAction({}: GitCommandActionProps) {
       return
     }
 
-    // 見つかったので、先頭から消していく
-    resetApplyingNodes.forEach((node) => {
-      const newNodes = filterRemovingNode(node)
-      const newEdges = removeConnectedEdge(node)
-      reactFlowInstance.setNodes(newNodes)
-      reactFlowInstance.setEdges(newEdges)
+    setLatestNode(targetNode)
+    setStyle(targetNode, {
+      backgroundColor: 'aqua',
     })
+
+    // 見つかったので、先頭から消していく
+    const newNodes = filterRemovingNode(resetApplyingNodes)
+    reactFlowInstance.setNodes(newNodes)
+    const newEdges = filterConnectedEdge(resetApplyingNodes)
+    reactFlowInstance.setEdges(newEdges)
 
     success({
       title: '対象のrevisionまでresetしました',
@@ -80,21 +84,27 @@ export default function useResetAction({}: GitCommandActionProps) {
     return hashOrHead
   }
 
-  const removeConnectedEdge = (removingNode: Node<Revision>) => {
+  const filterConnectedEdge = (removingNodes: Node<Revision>[]) => {
     const rfiEdges = reactFlowInstance.getEdges()
     const nextStateEdges = rfiEdges.filter(
       (edge) =>
-        !(edge.source == removingNode.id || edge.target == removingNode.id)
+        !removingNodes.some((s) => edge.source == s.id || edge.target == s.id)
+    )
+
+    console.log(
+      `after edges: ${nextStateEdges.map((e) => {
+        return JSON.stringify({ target: e.target, source: e.source }, null, 2)
+      })}`
     )
 
     return nextStateEdges
   }
 
-  const filterRemovingNode = (removingNode: Node<Revision>) => {
+  const filterRemovingNode = (removingNodes: Node<Revision>[]) => {
     const rfiNodes = reactFlowInstance.getNodes()
 
     const removedRfiNodes = rfiNodes.filter(
-      (node) => node.id != removingNode.id
+      (node) => !removingNodes.some((s) => s.id == node.id)
     )
     return removedRfiNodes
   }
