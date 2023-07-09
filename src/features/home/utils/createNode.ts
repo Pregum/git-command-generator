@@ -17,6 +17,7 @@ export default function createNode({
   parentHash,
   merge1Id,
   merge2Id,
+  type = 'revisionNode',
 }: {
   id: string
   x: number
@@ -30,6 +31,7 @@ export default function createNode({
   parentHash: string
   merge1Id?: string
   merge2Id?: string
+  type?: string
 }) {
   const hashStr = sha1()
   const defaultStyle: CSSProperties = {
@@ -44,7 +46,7 @@ export default function createNode({
       x: x,
       y: y,
     },
-    type: 'revisionNode',
+    type: type,
     data: {
       label: label,
       branchId,

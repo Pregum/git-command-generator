@@ -8,6 +8,59 @@ export default function useMyNode() {
   const [nodeWidth] = useAtom(nodeWidthAtom)
   const [nodeHeight] = useAtom(nodeHeightAtom)
 
+  const createGroupNode = ({
+    id,
+    x,
+    y,
+    label,
+    style,
+    branchId,
+    width,
+    height,
+    parentId,
+    parentHash,
+    merge1Id,
+    merge2Id,
+  }: {
+    id?: string
+    x: number
+    y: number
+    label: string
+    branchId?: string
+    style?: CSSProperties
+    width?: number
+    height?: number
+    parentId: string
+    parentHash: string
+    merge1Id?: string
+    merge2Id?: string
+  }) => {
+    let newNodeIdStr = id
+    if (newNodeIdStr === undefined) {
+      const newNodeId = nodeId + 1
+      newNodeIdStr = newNodeId.toFixed()
+      setNodeId(newNodeId)
+    }
+
+    const validatedWidth = width ? width : nodeWidth
+    const validatedHeight = height ? height : nodeHeight
+
+    return utilCreateNode({
+      id: newNodeIdStr,
+      x,
+      y,
+      label,
+      style,
+      branchId,
+      parentId,
+      parentHash,
+      width: validatedWidth,
+      height: validatedHeight,
+      merge1Id,
+      merge2Id,
+    })
+  }
+
   const createNode = ({
     id,
     x,
