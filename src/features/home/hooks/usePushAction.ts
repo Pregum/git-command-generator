@@ -25,4 +25,17 @@ export default function usePushAction() {
     // push アクションを行うと、右側にブロックを記載する
     const remoteParentNode = ''
   }
+
+  const matchPushAction = (inputStr: string) => {
+    return !!prasePushAction(inputStr)
+  }
+
+  const prasePushAction = (inputStr: string) => {
+    const pushRegex = /git\s+push\s+(?<remoteName>[\w\_\-]+)/
+    const remoteName = inputStr.match(pushRegex)?.groups?.remoteName ?? ''
+
+    return remoteName
+  }
+
+  return { pushAction, matchPushAction, prasePushAction }
 }

@@ -23,6 +23,7 @@ import useMergeAction from '../hooks/useMergeAction'
 import { useCustomKeybinding } from '../../../components/layouts/CustomKeybinding/CustomKeybinding'
 import { CommandHelpModal } from '../components/CommandHelpModal'
 import useResetAction from '../hooks/useResetAction'
+import usePushAction from '../hooks/usePushAction'
 
 export type Props = React.PropsWithChildren<{}>
 
@@ -64,6 +65,7 @@ export const Home: React.FC<Props> = ({}) => {
 
   const { mergeAction, matchMergeAction, parseMergeAction } = useMergeAction()
   const { resetAction, matchResetAction, parseResetAction } = useResetAction({})
+  const { pushAction, matchPushAction, prasePushAction } = usePushAction()
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
@@ -117,6 +119,8 @@ export const Home: React.FC<Props> = ({}) => {
       mergeAction(parseMergeAction(message))
     } else if (matchResetAction(message)) {
       resetAction(parseResetAction(message))
+    } else if (matchPushAction(message)) {
+      pushAction(prasePushAction(message))
     } else {
       toast({
         title: 'コマンドが不正です',
@@ -145,10 +149,6 @@ export const Home: React.FC<Props> = ({}) => {
               onChangedMessage={(newMessage) => setMessage(newMessage)}
             />
           </Grid>
-
-          {/* <Grid flex={1} h='100%' borderRadius='100%'>
-          <CommitHistoryImportButton />
-        </Grid> */}
 
           <Grid flex={4}>
             <Box bg='orange.50' h='100%'>
