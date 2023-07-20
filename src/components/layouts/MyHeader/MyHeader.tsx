@@ -25,14 +25,17 @@ import {
   MenuIcon,
   Spacer,
   Square,
+  Tooltip,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
 import { MyDrawer } from '../MyDrawer'
 
-export type Props = React.PropsWithChildren<{}>
+export type Props = React.PropsWithChildren<{
+  onClickHelpButton: () => void
+}>
 
-export const MyHeader: React.FC<Props> = ({ children }) => {
+export const MyHeader: React.FC<Props> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -62,13 +65,16 @@ export const MyHeader: React.FC<Props> = ({ children }) => {
             />
           </Square>
           <Square size={'40px'}>
-            <IconButton
-              borderRadius={0}
-              colorScheme='teal'
-              aria-label='menu'
-              size='md'
-              icon={<QuestionIcon />}
-            />
+            <Tooltip label='操作可能なコマンドを表示します'>
+              <IconButton
+                borderRadius={0}
+                colorScheme='teal'
+                aria-label='menu'
+                size='md'
+                icon={<QuestionIcon />}
+                onClick={props.onClickHelpButton}
+              />
+            </Tooltip>
           </Square>
           <Square size={'40px'}>
             <IconButton

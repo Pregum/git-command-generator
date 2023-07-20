@@ -132,7 +132,7 @@ export const Home: React.FC<Props> = ({}) => {
     <>
       <CommandHelpModal isOpen={isOpen} onClose={onClose} />
       <Flex direction='column' h='100vh'>
-        <MyHeader />
+        <MyHeader onClickHelpButton={onOpen} />
 
         <Flex direction='row' h='100%'>
           <Grid flex={3} maxW='600px' h='100%'>
