@@ -1,3 +1,12 @@
+### 開発停止中
+
+下記リポジトリが要件を満たしている為、このプロダクトは停止します。
+何かしらの動機があれば開発再開します。
+
+https://github.com/git-school/visualizing-git
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Summary
